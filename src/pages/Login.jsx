@@ -19,6 +19,7 @@ import { motion } from "framer-motion";
 import { HiSun, HiMoon } from "react-icons/hi";
 
 export default function Login() {
+  console.log(import.meta.env.API_KEY);
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
 
   useEffect(() => {
