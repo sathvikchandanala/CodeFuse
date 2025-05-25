@@ -74,11 +74,14 @@ export default function LandingPage() {
 
       <main className="flex-grow container mx-auto px-6 py-12">
         <section className="text-center space-y-6 max-w-4xl mx-auto px-4 py-8">
-          <h2 className="text-6xl font-extrabold leading-tight px-4 animate-fade-in-up
-               text-black 
-               dark:text-transparent dark:bg-gradient-to-b dark:from-white dark:to-white/70 dark:bg-clip-text">
-            Code<span className="text-6xl font-extrabold text-transparent bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text cursor-default select-none">Fuse </span>: Your Centralized Competitive Coding Companion
-          </h2>
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight px-4 text-center animate-fade-in-up text-black dark:text-transparent dark:bg-gradient-to-b dark:from-white dark:to-white/70 dark:bg-clip-text">
+  Code
+  <span className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-transparent bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text cursor-default select-none">
+    Fuse
+  </span>
+  : Your Centralized Competitive Coding Companion
+</h2>
+
 
           <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto animate-fade-in-up delay-200 px-4">
             CodeFuse integrates multiple coding platforms like LeetCode, Codeforces,
