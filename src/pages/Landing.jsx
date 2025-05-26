@@ -83,7 +83,8 @@ export default function LandingPage() {
 </h2>
 
 
-          <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto animate-fade-in-up delay-200 px-4">
+         <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-normal sm:leading-relaxed max-w-[90%] sm:max-w-2xl mx-auto animate-fade-in-up delay-200 px-4 text-center break-words">
+
             CodeFuse integrates multiple coding platforms like LeetCode, Codeforces,
             CodeChef, HackerRank, and more to give you a unified dashboard of your
             performance, upcoming contests, and engagement analytics.

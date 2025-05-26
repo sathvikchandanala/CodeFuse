@@ -57,7 +57,7 @@ export default function Login() {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const idToken = await user.getIdToken();
-      const res = await fetch("http://localhost:5000/login", {
+      const res = await fetch("https://codefuse-backend-0e4l.onrender.com/login", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -86,7 +86,7 @@ export default function Login() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       const idToken = await user.getIdToken();
-      const res = await fetch("http://localhost:5000/login", {
+      const res = await fetch("https://codefuse-backend-0e4l.onrender.com/login", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -128,7 +128,7 @@ export default function Login() {
       const user = userCredential.user;
       await linkWithCredential(user, pendingGoogleCredential);
       const idToken = await user.getIdToken();
-      const res = await fetch("http://localhost:5000/login", {
+      const res = await fetch("https://codefuse-backend-0e4l.onrender.com/login", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
