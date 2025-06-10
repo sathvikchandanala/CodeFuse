@@ -759,13 +759,16 @@ export default function Dashboard() {
     <Nav/>
     <main className="py-10 max-w-7xl mx-auto">
       <PlatformScores />
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 px-6 mt-10">
-        <ProblemOfTheDay />
-        <RecentActivity />
-        <ScheduleTab />
-        <MediumActivityCard />
-        <EventCalendar />
-      </div>
+     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 px-6 mt-10">
+  <ProblemOfTheDay />
+  <RecentActivity />
+  <ScheduleTab />
+  <MediumActivityCard />
+  <div className="col-span-full flex justify-center">
+    <EventCalendar />
+  </div>
+</div>
+
       <ActivityGraph />
     </main>
     </div>

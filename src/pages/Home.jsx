@@ -153,18 +153,22 @@ export default function Home() {
     onChange={(e) => handleChange(name, e.target.value)}
     className="w-full px-4 py-2 border rounded-lg bg-background border-border focus:outline-none focus:ring-2 focus:ring-primary transition duration-300"
   />
-  <div className="flex items-center justify-between">
-    <Button className="w-full sm:w-auto" onClick={() => handleUpdate(name)}>
-      Link
-    </Button>
-    <button
-      onClick={() => handleUnlink(name)}
-      className="p-2 text-muted-foreground hover:text-red-600 transition rounded-full focus:outline-none"
-      title={`Unlink ${name}`}
-    >
-      <FiXCircle size={22} />
-    </button>
-  </div>
+<div className="flex items-center justify-between gap-2 w-full">
+  <Button
+    onClick={() => handleUpdate(name)}
+    className="px-4 py-2 text-sm"
+  >
+    Link
+  </Button>
+  <button
+    onClick={() => handleUnlink(name)}
+    className="p-2 text-muted-foreground hover:text-red-600 transition rounded-full focus:outline-none"
+    title={`Unlink ${name}`}
+  >
+    <FiXCircle size={22} />
+  </button>
+</div>
+
 </div>
 
 

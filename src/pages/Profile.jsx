@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, db } from "../db"; 
+import { auth, db } from "../db";
 import { doc, getDoc } from "firebase/firestore";
 import {
   updatePassword,
@@ -127,10 +127,9 @@ export default function Profile() {
     );
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-background text-foreground">
       <Nav />
-      <main className="max-w-4xl mx-auto p-6 space-y-10 pt-25 ">
-        {/* Profile Card */}
+      <main className="max-w-4xl mx-auto p-4 space-y-10 pt-28">
         <Card className="shadow-lg rounded-lg border border-gray-200 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-bold">
@@ -138,19 +137,19 @@ export default function Profile() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-gray-800 dark:text-gray-200 text-lg">
-            <p className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 break-words">
               <FiUser className="text-blue-600 dark:text-blue-400" />
-              <span className="font-semibold">Name:</span>{" "}
-              <span>{user.displayName || "N/A"}</span>
-            </p>
-            <p className="flex items-center gap-2">
+              <span className="font-semibold">Name:</span>
+              <span className="truncate">{user.displayName || "N/A"}</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 break-words">
               <FiMail className="text-blue-600 dark:text-blue-400" />
-              <span className="font-semibold">Email:</span> <span>{user.email}</span>
-            </p>
+              <span className="font-semibold">Email:</span>
+              <span className="break-all">{user.email}</span>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Connected Platforms Card */}
         <Card className="shadow-lg rounded-lg border border-gray-200 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-bold">
@@ -167,12 +166,14 @@ export default function Profile() {
                   return (
                     <li
                       key={platform}
-                      className="flex items-center gap-3 p-3 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900 transition cursor-default"
+                      className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900 transition cursor-default"
                       title={username ? `Linked as ${username}` : "Not linked"}
                     >
-                      {icon}
-                      <span className="font-semibold w-32 capitalize">{platform}:</span>
-                      <span className={username ? "text-gray-800 dark:text-gray-200" : "italic text-gray-400"}>
+                      <div className="flex items-center gap-2 min-w-0">
+                        {icon}
+                        <span className="font-semibold capitalize">{platform}:</span>
+                      </div>
+                      <span className={`min-w-0 break-all ${username ? "text-gray-800 dark:text-gray-200" : "italic text-gray-400"}`}>
                         {username || "Not linked"}
                       </span>
                     </li>
@@ -187,7 +188,6 @@ export default function Profile() {
           </CardContent>
         </Card>
 
-        {/* Change Password Card */}
         <Card className="shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-bold">
@@ -195,12 +195,11 @@ export default function Profile() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Old Password Input */}
-            <div className="flex items-center gap-3">
-              <label htmlFor="old-password" className="w-32 text-gray-700 dark:text-gray-300 font-semibold">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+              <label htmlFor="old-password" className="w-40 text-gray-700 dark:text-gray-300 font-semibold">
                 Current Password
               </label>
-              <div className="relative flex-1 max-w-xs">
+              <div className="relative w-full max-w-xs">
                 <input
                   id="old-password"
                   type={showOldPassword ? "text" : "password"}
@@ -220,12 +219,11 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* New Password Input */}
-            <div className="flex items-center gap-3">
-              <label htmlFor="new-password" className="w-32 text-gray-700 dark:text-gray-300 font-semibold">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+              <label htmlFor="new-password" className="w-40 text-gray-700 dark:text-gray-300 font-semibold">
                 New Password
               </label>
-              <div className="relative flex-1 max-w-xs">
+              <div className="relative w-full max-w-xs">
                 <input
                   id="new-password"
                   type={showNewPassword ? "text" : "password"}
@@ -245,7 +243,6 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Errors and Success */}
             {passwordError && (
               <p className="text-red-600 font-semibold text-center">{passwordError}</p>
             )}
