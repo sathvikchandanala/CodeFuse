@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { signOut } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { db, auth } from "../db";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { useTheme } from "next-themes";
-import { HiSun, HiMoon } from "react-icons/hi";
+import { FiXCircle } from "react-icons/fi";
+
+import Alert from "./Alert";
+import Nav from "./Nav";
 import {
   SiLeetcode,
   SiCodeforces,
@@ -15,7 +15,8 @@ import {
   SiGeeksforgeeks,
   SiHackerearth,
 } from "react-icons/si";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, deleteField } from "firebase/firestore";
+
 
 const platforms = [
   { name: "LeetCode", icon: SiLeetcode, color: "#FFA116" },
@@ -29,41 +30,81 @@ const platforms = [
 export default function Home() {
   const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
-  const { theme, setTheme } = useTheme();
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [usernames, setUsernames] = useState({});
+
+  useEffect(() => {
+    const fetchUsernames = async () => {
+      if (!user?.email) return;
+      const userDocRef = doc(db, "users", user.email);
+      const docSnap = await getDoc(userDocRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setUsernames(data.platforms || {});
+      }
+    };
+    fetchUsernames();
+  }, [user]);
 
   const handleChange = (platform, value) => {
     setUsernames({ ...usernames, [platform]: value });
   };
 
+ const handleUnlink = async (platform) => {
+  if (!user?.email) return;
+  setError("");
+  setSuccessMessage("");
+
+  const userDocRef = doc(db, "users", user.email);
+  try {
+    // Remove the platform field from Firestore using updateDoc + deleteField
+    await updateDoc(userDocRef, {
+      [`platforms.${platform}`]: deleteField(),
+    });
+
+    // Update local state
+    setUsernames((prev) => ({ ...prev, [platform]: "" }));
+
+    // Show success message
+    setSuccessMessage(`${platform} account unlinked successfully!`);
+  } catch (err) {
+    setError("Failed to unlink account");
+    console.error(err);
+  }
+};
+
+
+
   const handleUpdate = async (platform) => {
     if (!user?.email) return;
-    const username = usernames[platform];
-    if (!username) return;
+    setError("");
+    setSuccessMessage("");
+
+    const username = usernames[platform]?.trim();
+    if (!username) {
+      setError("Username cannot be empty.");
+      return;
+    }
+
     const userDocRef = doc(db, "users", user.email);
     try {
-      const existingData = (await getDoc(userDocRef)).data() || {};
+      const docSnap = await getDoc(userDocRef);
+      const existingData = docSnap.exists() ? docSnap.data() : {};
       await setDoc(
         userDocRef,
         {
           platforms: {
-            ...existingData.platforms,
+            ...(existingData.platforms || {}),
             [platform]: username,
           },
         },
         { merge: true }
       );
-      alert(`${platform} username updated successfully!`);
-    } catch (error) {
-      alert("Failed to update username.");
+      setSuccessMessage(`${platform} username updated successfully!`);
+    } catch (err) {
+      setError("Failed to update username");
     }
-  };
-
-  const logout = async () => {
-    try {
-      await signOut(auth);
-      navigate("/");
-    } catch (err) {}
   };
 
   if (loading) return <div className="text-center mt-10">Loading...</div>;
@@ -73,36 +114,11 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground overflow-x-hidden">
-      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 sm:p-6 border-b border-border gap-4 sm:gap-0">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-6 w-full">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text cursor-default select-none">
-            CodeFuse
-          </h1>
-          {user.displayName || user.email ? (
-            <p className="text-sm sm:text-lg font-semibold text-muted-foreground truncate max-w-[200px] sm:max-w-none">
-              @{user.displayName || user.email.split("@")[0]}
-            </p>
-          ) : null}
-        </div>
-        <div className="flex items-center gap-2">
-          <Button onClick={logout} className="text-sm sm:text-base">
-            Log out
-          </Button>
-          {theme === "dark" ? (
-            <HiMoon className="text-yellow-400" />
-          ) : (
-            <HiSun className="text-yellow-500" />
-          )}
-          <Switch
-            checked={theme === "dark"}
-            onCheckedChange={() => setTheme(theme === "dark" ? "light" : "dark")}
-            aria-label="Toggle Dark Mode"
-          />
-        </div>
-      </header>
-
+    <div className="min-h-screen flex flex-col bg-background text-foreground overflow-x-hidden pt-15 ">
+      <Nav />
       <main className="flex-grow container mx-auto px-4 sm:px-6 py-12">
+        {error && <Alert message={error} type="error" onClose={() => setError("")} />}
+        {successMessage && <Alert message={successMessage} type="success" onClose={() => setSuccessMessage("")} />}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 place-items-center">
           {platforms.map(({ name, icon: Icon, color, comingSoon }) => (
             <div
@@ -121,7 +137,7 @@ export default function Home() {
                   </div>
                 )}
               </div>
-              <h2 className="text-3xl font-extrabold leading-tight px-4 animate-fade-in-up text-black dark:text-transparent dark:bg-gradient-to-b dark:from-white dark:to-white/70 dark:bg-clip-text">
+              <h2 className="text-3xl font-extrabold leading-tight px-4 text-black dark:text-transparent dark:bg-gradient-to-b dark:from-white dark:to-white/70 dark:bg-clip-text">
                 {name}
               </h2>
               {comingSoon ? (
@@ -129,21 +145,29 @@ export default function Home() {
                   <span className="text-lg">⚠️ Currently Not Available</span>
                 </div>
               ) : (
-                <div className="flex flex-col sm:flex-row gap-2 w-full">
-                  <input
-                    type="text"
-                    placeholder={`Enter ${name} username`}
-                    value={usernames[name] || ""}
-                    onChange={(e) => handleChange(name, e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg bg-background border-border focus:outline-none focus:ring-2 focus:ring-primary transition duration-300"
-                  />
-                  <Button
-                    className="w-full sm:w-auto"
-                    onClick={() => handleUpdate(name)}
-                  >
-                    Change
-                  </Button>
-                </div>
+<div className="flex flex-col gap-2 w-full">
+  <input
+    type="text"
+    placeholder={`Enter ${name} username`}
+    value={usernames[name] || ""}
+    onChange={(e) => handleChange(name, e.target.value)}
+    className="w-full px-4 py-2 border rounded-lg bg-background border-border focus:outline-none focus:ring-2 focus:ring-primary transition duration-300"
+  />
+  <div className="flex items-center justify-between">
+    <Button className="w-full sm:w-auto" onClick={() => handleUpdate(name)}>
+      Link
+    </Button>
+    <button
+      onClick={() => handleUnlink(name)}
+      className="p-2 text-muted-foreground hover:text-red-600 transition rounded-full focus:outline-none"
+      title={`Unlink ${name}`}
+    >
+      <FiXCircle size={22} />
+    </button>
+  </div>
+</div>
+
+
               )}
             </div>
           ))}

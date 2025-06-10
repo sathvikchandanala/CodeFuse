@@ -6,6 +6,8 @@ import Landing from "./pages/Landing"
 import PrivateRoute from "./PrivateRoute";
 import { Navigate } from "react-router-dom";
 import Homepage from "./pages/Sample";
+import NotFound from "./pages/Notfound";
+import Profile from "./pages/Profile";
 
 export default function App() {
   return (
@@ -14,16 +16,24 @@ export default function App() {
         <Route path="/" element={<Landing/>}/>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/homepage" element={<Homepage/>}/>
+        <Route path="/home" element={<PrivateRoute>
+        <Homepage/></PrivateRoute>}/>
         <Route
-          path="/home"
+          path="/link"
           element={
             <PrivateRoute>
               <Home />
             </PrivateRoute>
           }
+        /> <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
         />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFound/>} />
       </Routes>
     </Router>
   );

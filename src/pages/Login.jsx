@@ -6,9 +6,11 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   linkWithCredential,
+  sendPasswordResetEmail,
 } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import Alert from "./Alert";
-import { auth } from "../db";
+import { auth, db } from "../db";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
@@ -19,7 +21,6 @@ import { motion } from "framer-motion";
 import { HiSun, HiMoon } from "react-icons/hi";
 
 export default function Login() {
-  console.log(import.meta.env.API_KEY);
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
 
   useEffect(() => {
@@ -42,8 +43,22 @@ export default function Login() {
   const [linkingEmail, setLinkingEmail] = useState("");
   const [linkPassword, setLinkPassword] = useState("");
   const [showLinkingPasswordForm, setShowLinkingPasswordForm] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotMessage, setForgotMessage] = useState("");
 
   const navigate = useNavigate();
+
+  async function checkAndCreateUserData(user) {
+    const userRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(userRef);
+    if (!docSnap.exists()) {
+      await setDoc(userRef, {
+        email: user.email,
+        createdAt: new Date().toISOString(),
+      });
+    }
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -56,8 +71,14 @@ export default function Login() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+      if (!user.emailVerified) {
+        setError("Please verify your email before logging in.");
+        await auth.signOut();
+        return;
+      }
+      await checkAndCreateUserData(user);
       const idToken = await user.getIdToken();
-      const res = await fetch("https://codefuse-backend-0e4l.onrender.com/login", {
+      const res = await fetch(`${import.meta.env.VITE_BACK_END_URL}/login`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -85,8 +106,14 @@ export default function Login() {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
+      if (!user.emailVerified) {
+        setError("Please verify your email before logging in.");
+        await auth.signOut();
+        return;
+      }
+      await checkAndCreateUserData(user);
       const idToken = await user.getIdToken();
-      const res = await fetch("https://codefuse-backend-0e4l.onrender.com/login", {
+      const res = await fetch(`${import.meta.env.VITE_BACK_END_URL}/login`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -126,9 +153,15 @@ export default function Login() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, linkingEmail, linkPassword);
       const user = userCredential.user;
+      if (!user.emailVerified) {
+        setError("Please verify your email before linking accounts.");
+        await auth.signOut();
+        return;
+      }
       await linkWithCredential(user, pendingGoogleCredential);
+      await checkAndCreateUserData(user);
       const idToken = await user.getIdToken();
-      const res = await fetch("https://codefuse-backend-0e4l.onrender.com/login", {
+      const res = await fetch(`${import.meta.env.VITE_BACK_END_URL}/login`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -146,6 +179,22 @@ export default function Login() {
       }
     } catch (err) {
       setError(err.message || "Failed to link accounts");
+    }
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setError("");
+    setForgotMessage("");
+    if (!forgotEmail) {
+      setError("Please enter your email to reset password.");
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, forgotEmail);
+      setForgotMessage("Password reset email sent! Check your inbox.");
+    } catch (err) {
+      setError(err.message || "Failed to send reset email");
     }
   };
 
@@ -230,67 +279,131 @@ export default function Login() {
           <div className="w-full max-w-md">
             {error && <Alert message={error} type="error" onClose={() => setError("")} />}
             {successMessage && <Alert message={successMessage} type="success" onClose={() => setSuccessMessage("")} />}
+            {forgotMessage && <Alert message={forgotMessage} type="success" onClose={() => setForgotMessage("")} />}
 
-            <Card className="w-full max-w-md mx-auto bg-[#1a1a1a] text-white border border-[#2a2a2a] rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.9)]">
-
-              <CardHeader>
-                <CardTitle className="text-xl text-center font-semibold">Log in to your account</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-1 relative">
-                    <Label htmlFor="email">Email</Label>
-                    <div className="relative">
-                      <AiOutlineUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="you@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="bg-[#121212] text-white border border-[#333] pl-10"
-                      />
+            {!showForgotPassword && (
+              <Card className="w-full max-w-md mx-auto bg-[#1a1a1a] text-white border border-[#2a2a2a] rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.9)]">
+                <CardHeader>
+                  <CardTitle className="text-xl text-center font-semibold">Log in to your account</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-5">
+                  <form onSubmit={handleLogin} className="space-y-4">
+                    <div className="space-y-1 relative">
+                      <Label htmlFor="email">Email</Label>
+                      <div className="relative">
+                        <AiOutlineUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="you@example.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="bg-[#121212] text-white border border-[#333] pl-10"
+                        />
+                      </div>
                     </div>
+
+                    <div className="space-y-1 relative">
+                      <Label htmlFor="password">Password</Label>
+                      <div className="relative">
+                        <AiOutlineLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                        <Input
+                          id="password"
+                          type="password"
+                          placeholder="Enter your password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="bg-[#121212] text-white border border-[#333] pl-10"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowForgotPassword(true);
+                          setError("");
+                          setSuccessMessage("");
+                          setForgotMessage("");
+                          setForgotEmail(email || "");
+                        }}
+                        className="text-sm text-blue-400 hover:text-blue-600 underline"
+                      >
+                        Forgot Password?
+                      </button>
+                    </div>
+
+                    <Button type="submit" className="w-full bg-white text-black hover:bg-gray-100 font-medium py-3 text-base ">
+                      Log In
+                    </Button>
+                  </form>
+
+                  <div className="flex items-center justify-center mt-4">
+                    <Button
+                      onClick={handleGoogleLogin}
+                      className="w-1/2 bg-black-700 hover:bg-black-700 text-white font-medium flex items-center justify-center gap-2"
+                    >
+                      <FcGoogle className="text-xl" />
+                      Continue with Google
+                    </Button>
                   </div>
 
-                  <div className="space-y-1 relative">
-                    <Label htmlFor="password">Password</Label>
-                    <div className="relative">
-                      <AiOutlineLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                      <Input
-                        id="password"
-                        type="password"
-                        placeholder="Enter your password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="bg-[#121212] text-white border border-[#333] pl-10"
-                      />
-                    </div>
+                  <div className="text-center text-sm text-gray-400 mt-4">
+                    Don't have an account?{" "}
+                    <a href="/signup" className="text-white underline hover:text-gray-300">
+                      Signup
+                    </a>
                   </div>
+                </CardContent>
+              </Card>
+            )}
 
-                  <Button type="submit" className="w-full bg-white text-black hover:bg-gray-100 font-medium py-3 text-base ">
-                    Log In
-                  </Button>
-                </form>
+            {showForgotPassword && (
+              <Card className="w-full max-w-md mx-auto bg-[#1a1a1a] text-white border border-[#2a2a2a] rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.9)]">
+                <CardHeader>
+                  <CardTitle className="text-xl text-center font-semibold">Reset Password</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-5">
+                  <form onSubmit={handleForgotPassword} className="space-y-4">
+                    <div className="space-y-1 relative">
+                      <Label htmlFor="forgotEmail">Email</Label>
+                      <div className="relative">
+                        <AiOutlineUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                        <Input
+                          id="forgotEmail"
+                          type="email"
+                          placeholder="Enter your email"
+                          value={forgotEmail}
+                          onChange={(e) => setForgotEmail(e.target.value)}
+                          className="bg-[#121212] text-white border border-[#333] pl-10"
+                        />
+                      </div>
+                    </div>
 
-                <div className="flex items-center justify-center mt-4">
-                  <Button   onClick={handleGoogleLogin}
-  className="w-1/2 bg-black-700 hover:bg-black-700 text-white font-medium flex items-center justify-center gap-2"
->
-  <FcGoogle className="text-xl" />
-  Continue with Google
-</Button>
+                    {error && <div className="text-red-600 text-sm text-center">{error}</div>}
 
-                </div>
+                    <Button type="submit" className="w-full bg-white text-black hover:bg-gray-100 font-medium py-3 text-base ">
+                      Send Reset Email
+                    </Button>
 
-                <div className="text-center text-sm text-gray-400 mt-4">
-                  Already have an account?{" "}
-                  <a href="/signup" className="text-white underline hover:text-gray-300">
-                    Signup
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
+                    <div className="text-center mt-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowForgotPassword(false);
+                          setError("");
+                          setForgotMessage("");
+                        }}
+                        className="text-sm text-blue-400 hover:text-blue-600 underline"
+                      >
+                        Back to Login
+                      </button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>

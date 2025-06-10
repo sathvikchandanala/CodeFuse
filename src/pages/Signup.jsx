@@ -3,10 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
-import { AiOutlineUser, AiOutlineMail, AiOutlineLock,AiOutlineArrowLeft } from "react-icons/ai";
-import { auth, db } from "../db";
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { AiOutlineUser, AiOutlineMail, AiOutlineLock, AiOutlineArrowLeft } from "react-icons/ai";
+import { auth } from "../db";
+import { createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import Alert from "./Alert";
 import { useEffect } from "react";
@@ -49,16 +48,12 @@ export default function Signup() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       await sendEmailVerification(user);
-      await setDoc(doc(db, "users", user.uid), {
-        name,
-        email,
-        createdAt: new Date(),
-      });
-      setSuccess("Check your mail to verify your account.");
+      setSuccess("Verification email sent. Please check your email and verify your account before logging in.");
       setTimeout(() => {
         setSuccess("");
         navigate("/login");
-      }, 5000);
+      }, 7000);
+      // Do NOT store user data in Firestore here - will be stored only after email verified on login
     } catch (err) {
       setError(err.message);
     }
