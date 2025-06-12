@@ -40,3 +40,19 @@
 .read-the-docs {
   color: #888;
 }
+
+.color-empty {
+  fill: #f3f3f3;
+}
+.color-scale-1 {
+  fill: #ffe0b2; /* light orange */
+}
+.color-scale-2 {
+  fill: #ffb74d;
+}
+.color-scale-3 {
+  fill: #ff9800;
+}
+.color-scale-4 {
+  fill: #ef6c00; /* dark orange */
+}

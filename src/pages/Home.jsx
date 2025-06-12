@@ -4,7 +4,6 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { db, auth } from "../db";
 import { Button } from "@/components/ui/button";
 import { FiXCircle } from "react-icons/fi";
-
 import Alert from "./Alert";
 import Nav from "./Nav";
 import {
@@ -16,7 +15,6 @@ import {
   SiHackerearth,
 } from "react-icons/si";
 import { doc, setDoc, getDoc, updateDoc, deleteField } from "firebase/firestore";
-
 
 const platforms = [
   { name: "LeetCode", icon: SiLeetcode, color: "#FFA116" },
@@ -47,46 +45,45 @@ export default function Home() {
     fetchUsernames();
   }, [user]);
 
+  useEffect(() => {
+    if (error || successMessage) {
+      const timer = setTimeout(() => {
+        setError("");
+        setSuccessMessage("");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, successMessage]);
+
   const handleChange = (platform, value) => {
     setUsernames({ ...usernames, [platform]: value });
   };
 
- const handleUnlink = async (platform) => {
-  if (!user?.email) return;
-  setError("");
-  setSuccessMessage("");
-
-  const userDocRef = doc(db, "users", user.email);
-  try {
-    // Remove the platform field from Firestore using updateDoc + deleteField
-    await updateDoc(userDocRef, {
-      [`platforms.${platform}`]: deleteField(),
-    });
-
-    // Update local state
-    setUsernames((prev) => ({ ...prev, [platform]: "" }));
-
-    // Show success message
-    setSuccessMessage(`${platform} account unlinked successfully!`);
-  } catch (err) {
-    setError("Failed to unlink account");
-    console.error(err);
-  }
-};
-
-
+  const handleUnlink = async (platform) => {
+    if (!user?.email) return;
+    setError("");
+    setSuccessMessage("");
+    const userDocRef = doc(db, "users", user.email);
+    try {
+      await updateDoc(userDocRef, {
+        [`platforms.${platform}`]: deleteField(),
+      });
+      setUsernames((prev) => ({ ...prev, [platform]: "" }));
+      setSuccessMessage(`${platform} account unlinked successfully!`);
+    } catch (err) {
+      setError("Failed to unlink account");
+    }
+  };
 
   const handleUpdate = async (platform) => {
     if (!user?.email) return;
     setError("");
     setSuccessMessage("");
-
     const username = usernames[platform]?.trim();
     if (!username) {
       setError("Username cannot be empty.");
       return;
     }
-
     const userDocRef = doc(db, "users", user.email);
     try {
       const docSnap = await getDoc(userDocRef);
@@ -114,7 +111,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground overflow-x-hidden pt-15 ">
+    <div className="min-h-screen flex flex-col bg-background text-foreground overflow-x-hidden">
       <Nav />
       <main className="flex-grow container mx-auto px-4 sm:px-6 py-12">
         {error && <Alert message={error} type="error" onClose={() => setError("")} />}
@@ -145,33 +142,30 @@ export default function Home() {
                   <span className="text-lg">⚠️ Currently Not Available</span>
                 </div>
               ) : (
-<div className="flex flex-col gap-2 w-full">
-  <input
-    type="text"
-    placeholder={`Enter ${name} username`}
-    value={usernames[name] || ""}
-    onChange={(e) => handleChange(name, e.target.value)}
-    className="w-full px-4 py-2 border rounded-lg bg-background border-border focus:outline-none focus:ring-2 focus:ring-primary transition duration-300"
-  />
-<div className="flex items-center justify-between gap-2 w-full">
-  <Button
-    onClick={() => handleUpdate(name)}
-    className="px-4 py-2 text-sm"
-  >
-    Link
-  </Button>
-  <button
-    onClick={() => handleUnlink(name)}
-    className="p-2 text-muted-foreground hover:text-red-600 transition rounded-full focus:outline-none"
-    title={`Unlink ${name}`}
-  >
-    <FiXCircle size={22} />
-  </button>
-</div>
-
-</div>
-
-
+                <div className="flex flex-col gap-2 w-full">
+                  <input
+                    type="text"
+                    placeholder={`Enter ${name} username`}
+                    value={usernames[name] || ""}
+                    onChange={(e) => handleChange(name, e.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg bg-background border-border focus:outline-none focus:ring-2 focus:ring-primary transition duration-300"
+                  />
+                  <div className="flex items-center justify-between gap-2 w-full">
+                    <Button
+                      onClick={() => handleUpdate(name)}
+                      className="px-4 py-2 text-sm"
+                    >
+                      Link
+                    </Button>
+                    <button
+                      onClick={() => handleUnlink(name)}
+                      className="p-2 text-muted-foreground hover:text-red-600 transition rounded-full focus:outline-none"
+                      title={`Unlink ${name}`}
+                    >
+                      <FiXCircle size={22} />
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           ))}

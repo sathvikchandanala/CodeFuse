@@ -8,6 +8,10 @@ import { Navigate } from "react-router-dom";
 import Homepage from "./pages/Sample";
 import NotFound from "./pages/Notfound";
 import Profile from "./pages/Profile";
+import ContestsPage from "./pages/ContestPage";
+import HackathonsPage from "./pages/Hackathon";
+import LeetCode from "./pages/LeetCode";
+import Codeforces from "./pages/codeforces";
 
 export default function App() {
   return (
@@ -25,11 +29,43 @@ export default function App() {
               <Home />
             </PrivateRoute>
           }
-        /> <Route
+        /> 
+          <Route
+          path="/leetcode"
+          element={
+            <PrivateRoute>
+              <LeetCode />
+            </PrivateRoute>
+          }
+        /> 
+        <Route
+          path="/codeforces"
+          element={
+            <PrivateRoute>
+              <Codeforces />
+            </PrivateRoute>
+          }
+        /> 
+        <Route
+          path="/contests"
+          element={
+            <PrivateRoute>
+              <ContestsPage />
+            </PrivateRoute>
+          }
+        /><Route
           path="/profile"
           element={
             <PrivateRoute>
               <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/hackathons"
+          element={
+            <PrivateRoute>
+              <HackathonsPage />
             </PrivateRoute>
           }
         />

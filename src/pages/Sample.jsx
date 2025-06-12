@@ -6,9 +6,10 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { FaChevronDown } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import { FaLink } from "react-icons/fa";
 import Nav from "./Nav";
-import { Link } from "react-router-dom";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -110,55 +111,63 @@ function PlatformScores() {
   };
 
   return (
-    <div className="pt-15 ">
+    <div className="pt-10">
       {/* Inject shimmer animation keyframes */}
       <style>{shimmerKeyframes}</style>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-6">
         {supportedPlatforms.map((platform) => (
           <Card
-            key={platform}
-            className="rounded-2xl shadow-md hover:shadow-lg transition"
-          >
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                {platform}
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent>
-              {loading ? (
-                <>
-                  <div
-                    style={{ ...shimmerStyle, height: 40, width: "60%", borderRadius: 8 }}
-                    className="mb-3"
-                  />
-                  <div
-                    style={{ ...shimmerStyle, height: 16, width: "40%", borderRadius: 4 }}
-                  />
-                </>
-              ) : scores[platform] ? (
-                <>
-                  <p className="text-3xl font-extrabold text-transparent bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text">
-                    {scores[platform]}
-                  </p>
-                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    {getLabel(platform)}
-                  </p>
-                </>
-              ) : (
-               <Link
-  to="/link"
-  className="flex items-center justify-left gap-2 text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition duration-300"
+  key={platform}
+  className="rounded-2xl shadow-md hover:shadow-lg transition flex flex-col justify-between"
 >
-  <span className="text-xl">🔗</span>
-  <span>Link your {platform} account</span>
-</Link>
+  <CardHeader>
+    <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+      {platform}
+    </CardTitle>
+  </CardHeader>
 
+  <CardContent className="flex flex-col justify-between flex-grow">
+    {loading ? (
+      <>
+        <div
+          style={{ ...shimmerStyle, height: 40, width: "60%", borderRadius: 8 }}
+          className="mb-3"
+        />
+        <div
+          style={{ ...shimmerStyle, height: 16, width: "40%", borderRadius: 4 }}
+        />
+      </>
+    ) : scores[platform] ? (
+      <>
+        <div>
+          <p className="text-3xl font-extrabold text-transparent bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text">
+            {scores[platform]}
+          </p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            {getLabel(platform)}
+          </p>
+        </div>
 
-              )}
-            </CardContent>
-          </Card>
+        {/* View More with Down Arrow */}
+        <Link
+          to={`/${platform.toLowerCase()}`}
+          className="mt-4 inline-flex items-center justify-center text-sm text-black-600 hover:text-gray-600 transition font-bold"
+        >
+          View More <FaChevronDown className="ml-2" />
+        </Link>
+      </>
+    ) : (
+      <Link
+        to="/link"
+        className="flex items-center justify-left gap-2 text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition duration-300"
+      >
+        <span className="text-xl">🔗</span>
+        <span>Link your {platform} account</span>
+      </Link>
+    )}
+  </CardContent>
+</Card>
         ))}
       </div>
     </div>
@@ -240,9 +249,9 @@ function ProblemOfTheDay() {
   };
 
   const difficultyColors = {
-    easy: "bg-green-600 text-white-800 ",
+    easy: "bg-green-400 text-white-800 ",
     medium: "bg-yellow-400 text-white-800 ",
-    hard: "bg-red-500 text-white-800 ",
+    hard: "bg-red-400 text-white-800 ",
   };
 
   const loadingCount = 1;
@@ -336,7 +345,7 @@ function ProblemOfTheDay() {
                               {problem.tags.map((tag) => (
                                 <span
                                   key={tag}
-                                  className="bg-gray-200 text-black px-3 py-1 rounded-full text-xs font-medium"
+                                  className="bg-gray-100 text-black px-3 py-1 rounded-full text-xs font-medium border"
                                 >
                                   {tag}
                                 </span>
@@ -345,7 +354,7 @@ function ProblemOfTheDay() {
                           )}
 
                           <CardFooter className="flex justify-center">
-                            <Button asChild className="w-1/3 px-10 flex items-center gap-2">
+                            <Button asChild className="w-1/3 px-10 flex items-center gap-2 bg-blue-600">
                               <a href={problem.link} target="_blank" rel="noopener noreferrer">
                                 Solve <FiExternalLink size={18} />
                               </a>
@@ -757,15 +766,15 @@ export default function Dashboard() {
   return (
     <div>
     <Nav/>
-    <main className="py-10 max-w-7xl mx-auto">
+    <main className="max-w-7xl mx-auto">
       <PlatformScores />
      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 px-6 mt-10">
   <ProblemOfTheDay />
   <RecentActivity />
   <ScheduleTab />
-  <MediumActivityCard />
+ <EventCalendar />
   <div className="col-span-full flex justify-center">
-    <EventCalendar />
+    
   </div>
 </div>
 

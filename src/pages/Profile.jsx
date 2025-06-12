@@ -129,7 +129,7 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Nav />
-      <main className="max-w-4xl mx-auto p-4 space-y-10 pt-28">
+      <main className="max-w-4xl mx-auto p-4 space-y-10 pt-10">
         <Card className="shadow-lg rounded-lg border border-gray-200 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-bold">
