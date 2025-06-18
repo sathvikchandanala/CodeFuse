@@ -1,4 +1,3 @@
-// src/components/Nav.jsx
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -13,6 +12,7 @@ import {
   FaTrophy,
   FaCode,
 } from "react-icons/fa";
+import { FaUserFriends } from "react-icons/fa";
 import { useTheme } from "next-themes";
 import { useNavigate, useLocation } from "react-router-dom";
 import { signOut } from "firebase/auth";
@@ -29,7 +29,7 @@ export default function Nav() {
   const logout = async () => {
     try {
       await signOut(auth);
-      navigate("/");
+      navigate("/", { state: { logoutSuccess: true } });
     } catch (err) {
       console.error("Logout failed:", err);
     }
@@ -55,6 +55,7 @@ export default function Nav() {
           <NavButton icon={<FaTasks />} label="Task Schedules" path="/tasks" isActive={isActive} navigate={navigate} />
           <NavButton icon={<FaTrophy />} label="Contests" path="/contests" isActive={isActive} navigate={navigate} />
           <NavButton icon={<FaCode />} label="Hackathons" path="/hackathons" isActive={isActive} navigate={navigate} />
+          <NavButton icon={<FaUserFriends />} label="Track" path="/track" isActive={isActive} navigate={navigate} />
           <NavButton icon={<FaUser />} label="Profile" path="/profile" isActive={isActive} navigate={navigate} />
         </nav>
 
@@ -84,6 +85,7 @@ export default function Nav() {
           <NavButton icon={<FaTasks />} label="Task Schedules" path="/tasks" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
           <NavButton icon={<FaTrophy />} label="Contests" path="/contests" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
           <NavButton icon={<FaCode />} label="Hackathons" path="/hackathons" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
+          <NavButton icon={<FaUserFriends />} label="Track" path="/track" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
           <NavButton icon={<FaUser />} label="Profile" path="/profile" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
           <Button onClick={() => { logout(); setMenuOpen(false); }} variant="ghost" className="text-sm mt-2">
             Log out
@@ -107,7 +109,7 @@ export default function Nav() {
 function NavButton({ icon, label, path, isActive, navigate, onClick }) {
   return (
     <Button
-      variant={isActive(path) ? "default" : "outline"}
+      variant={isActive(path) ? "default" : "none"}
       onClick={() => {
         navigate(path);
         if (onClick) onClick();

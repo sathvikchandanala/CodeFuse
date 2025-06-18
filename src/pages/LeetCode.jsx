@@ -9,6 +9,7 @@ import { FaCheckCircle, FaFire, FaBolt, FaTrophy } from "react-icons/fa";
 import { getAuth } from "firebase/auth";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { SiLeetcode } from "react-icons/si"; // this is from simple-icons and closest to LeetCode
+import Footer from "./Footer";
 
 import Nav from "./Nav";
 
@@ -149,6 +150,7 @@ export default function LeetCode() {
         <CardContent>{renderContent()}</CardContent>
       </Card>
     </div>
+    <Footer/>
     </div>
   );
 }

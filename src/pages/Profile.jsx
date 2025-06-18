@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 
 import Nav from "./Nav";
-
+import Footer from "./Footer";
 import {
   Card,
   CardHeader,
@@ -264,6 +264,7 @@ export default function Profile() {
           </CardFooter>
         </Card>
       </main>
+      <Footer/>
     </div>
   );
 }

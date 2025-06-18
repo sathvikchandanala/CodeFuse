@@ -9,6 +9,7 @@ import { FaCheckCircle, FaFire, FaBolt, FaTrophy } from "react-icons/fa";
 import { SiCodeforces } from "react-icons/si";
 import Nav from "./Nav";
 import { Skeleton } from "@/components/ui/skeleton";
+import Footer from "./Footer";
 
 export default function Codeforces() {
   const [profile, setProfile] = useState(null);
@@ -141,6 +142,7 @@ export default function Codeforces() {
           <CardContent>{renderContent()}</CardContent>
         </Card>
       </div>
+      <Footer/>
     </div>
   );
 }

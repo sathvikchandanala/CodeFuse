@@ -8,6 +8,9 @@ import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 import { HiSun, HiMoon } from 'react-icons/hi';
+import { useLocation} from "react-router-dom";
+import { useEffect, useState } from "react";
+import Alert from "./Alert"; // adjust path if needed
 
 import {
   FaTachometerAlt,
@@ -53,9 +56,38 @@ export default function LandingPage() {
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
 
+  const location = useLocation();
+ const [showAlert, setShowAlert] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowAlert(false);
+    }, 3000); // 3 seconds
+
+    return () => clearTimeout(timer); // cleanup
+  }, []);
+
+useEffect(() => {
+  if (location.state?.logoutSuccess) {
+    setShowAlert(true);
+    // Clear the state from history
+    window.history.replaceState({}, document.title);
+  }
+}, [location.state]);
+
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <header className="flex justify-between items-center p-6 border-b border-border">
+     {showAlert && (
+        <Alert
+          message="Logged out successfully!"
+          type="success"
+          onClose={() => setShowAlert(false)}
+          closable
+        />
+)}
+
+      <header className="flex justify-between items-center p-6 border-b border-border shadow-sm px-4 sm:px-6">
         
         <h1 className="text-3xl font-extrabold leading-tight px-4 animate-fade-in-up
                text-black 
@@ -139,7 +171,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="p-6 border-t border-border text-center text-sm text-muted-foreground mt-5">
+      <footer className="mt-10 p-6 border-t border-border text-center text-sm text-muted-foreground shadow-[0_2px_10px_rgba(0,0,0,0.2)]">
   <div className="flex justify-center gap-6 mb-2">
     <a
       href="https://github.com/yourusername"

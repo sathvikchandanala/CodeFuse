@@ -11,6 +11,7 @@ import Alert from "./Alert";
 import { useEffect } from "react";
 import { Switch } from "../components/ui/switch";
 import { HiSun, HiMoon } from "react-icons/hi";
+import { updateProfile } from "firebase/auth";
 
 export default function Signup() {
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
@@ -47,6 +48,9 @@ export default function Signup() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+      await updateProfile(user, {
+  displayName: name,
+});
       await sendEmailVerification(user);
       setSuccess("Verification email sent. Please check your email and verify your account before logging in.");
       setTimeout(() => {

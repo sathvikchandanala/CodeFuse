@@ -89,9 +89,10 @@ export default function Login() {
         setError(data.message || "Login failed");
       } else {
         setSuccessMessage("Login successful!");
+        sessionStorage.setItem("justLoggedIn", "true");
         setTimeout(() => {
           setSuccessMessage("");
-          navigate("/home");
+          navigate("/home", { state: { showWelcome: true } });
         }, 1500);
       }
     } catch (err) {
@@ -124,9 +125,10 @@ export default function Login() {
         setError(data.message || "Google login failed");
       } else {
         setSuccessMessage("Login successful!");
+        sessionStorage.setItem("justLoggedIn", "true");
         setTimeout(() => {
           setSuccessMessage("");
-          navigate("/home");
+          navigate("/home", { state: { showWelcome: true } });
         }, 1500);
       }
     } catch (error) {
@@ -175,7 +177,8 @@ export default function Login() {
         setPendingGoogleCredential(null);
         setLinkPassword("");
         setLinkingEmail("");
-        navigate("/home");
+        sessionStorage.setItem("justLoggedIn", "true");
+        navigate("/home", { state: { showWelcome: true } });
       }
     } catch (err) {
       setError(err.message || "Failed to link accounts");

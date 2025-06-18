@@ -6,9 +6,12 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+
+import { useNavigate } from "react-router-dom";
+import Footer from "./Footer";
+import { useLocation } from "react-router-dom";
 import { FaChevronDown } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { FaLink } from "react-icons/fa";
 import Nav from "./Nav";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
@@ -18,9 +21,12 @@ import { FiBookmark, FiExternalLink } from "react-icons/fi";
 import { Calendar } from "@/components/ui/calendar";
 import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../db"; // your firestore config
+import { db,auth } from "../db"; // your firestore config
 import axios from "axios"
-import { CalendarClock, CheckCircle, XCircle, Laptop2 } from "lucide-react";
+import { CalendarClock, CheckCircle, XCircle, Laptop2,Clock10  } from "lucide-react";
+import { onSnapshot, collection } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { KeepAlive } from 'react-activation';
 import {
   ResponsiveContainer,
   LineChart,
@@ -28,11 +34,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import React,{useState,useEffect } from "react";
+import React,{useState,useEffect,useRef } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarPlus } from "lucide-react";
 import { format,isSameDay,isToday } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import Alert from "./Alert";
+import { SiLeetcode, SiCodeforces, SiCodechef } from "react-icons/si";
 
 
 function ThemeToggle() {
@@ -68,39 +76,38 @@ const shimmerKeyframes = `
 `;
 
 const supportedPlatforms = ["LeetCode", "CodeChef", "Codeforces"];
+const getPlatformIcon = (platform) => {
+  if (platform === "LeetCode") return <SiLeetcode className="text-orange-500 w-5 h-5" />;
+  if (platform === "CodeChef") return <SiCodechef className="text-purple-700 w-5 h-5" />;
+  if (platform === "Codeforces") return <SiCodeforces className="text-blue-600 w-5 h-5" />;
+  return null;
+};
+
 
 function PlatformScores() {
   const [scores, setScores] = useState({});
   const [loading, setLoading] = useState(true);
+useEffect(() => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (!user) return;
 
-  useEffect(() => {
-    const fetchScores = async () => {
-      try {
-        const auth = getAuth();
-        const user = auth.currentUser;
+  const docRef = doc(db, "users", user.email);
+  const unsubscribe = onSnapshot(docRef, async (docSnap) => {
+    if (docSnap.exists()) {
+      const platformUsernames = docSnap.data().platforms || {};
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACK_END_URL}/platform-scores`,
+        platformUsernames
+      );
+      setScores(response.data);
+    }
+    setLoading(false);
+  });
 
-        if (user) {
-          const docRef = doc(db, "users", user.email);
-          const docSnap = await getDoc(docRef);
+  return () => unsubscribe(); // cleanup
+}, []);
 
-          if (docSnap.exists()) {
-            const platformUsernames = docSnap.data().platforms || {};
-            const response = await axios.post(
-              `${import.meta.env.VITE_BACK_END_URL}/platform-scores`,
-              platformUsernames
-            );
-            setScores(response.data);
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching platform scores:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchScores();
-  }, []);
 
   const getLabel = (platformName) => {
     const lower = platformName.toLowerCase();
@@ -116,15 +123,18 @@ function PlatformScores() {
       <style>{shimmerKeyframes}</style>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-6">
+      <>
         {supportedPlatforms.map((platform) => (
           <Card
   key={platform}
   className="rounded-2xl shadow-md hover:shadow-lg transition flex flex-col justify-between"
 >
   <CardHeader>
-    <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-      {platform}
-    </CardTitle>
+    <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+  {getPlatformIcon(platform)}
+  {platform}
+</CardTitle>
+
   </CardHeader>
 
   <CardContent className="flex flex-col justify-between flex-grow">
@@ -169,6 +179,8 @@ function PlatformScores() {
   </CardContent>
 </Card>
         ))}
+        <TimeTrackerCard />
+        </>
       </div>
     </div>
   );
@@ -318,23 +330,25 @@ function ProblemOfTheDay() {
                           key={problem.title}
                           className="relative rounded-2xl shadow-md w-full max-w-3xl mx-auto"
                         >
-                          <div className="absolute top-4 left-4 text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer z-10">
-                            <FiBookmark size={20} />
-                          </div>
 
-                          <div
-                            className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-semibold ${diffClass}`}
-                          >
-                            {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
-                          </div>
+                          
 
-                          <CardHeader className="relative">
-                            <div className="pr-24 pl-10">
-                              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100 break-words">
-                                {problem.title}
-                              </CardTitle>
-                            </div>
-                          </CardHeader>
+                          <CardHeader className="px-6">
+  <div className="flex flex-wrap items-center justify-between gap-3">
+    <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-100 break-words">
+      {getPlatformIcon(platform)}
+      {problem.title}
+    </CardTitle>
+
+    <span
+      className={`px-3 py-1 rounded-full text-sm font-semibold ${diffClass}`}
+    >
+      {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+    </span>
+  </div>
+</CardHeader>
+
+
 
                           <CardContent>
                             <h5 className="text-gray-600 font-medium">Platform: {platform}</h5>
@@ -373,6 +387,52 @@ function ProblemOfTheDay() {
     </>
   );
 }
+
+export function TimeTrackerCard() {
+  const [seconds, setSeconds] = useState(() => {
+    const saved = localStorage.getItem("overallTimeSpent");
+    return saved ? parseInt(saved, 10) : 0;
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds((prev) => {
+        const updated = prev + 1;
+        localStorage.setItem("overallTimeSpent", updated);
+        return updated;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatTime = (totalSeconds) => {
+    const hrs = Math.floor(totalSeconds / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+    return `${hrs}h ${mins}m ${secs}s`;
+  };
+
+  return (
+    <Card className="rounded-2xl shadow-md hover:shadow-lg transition flex flex-col justify-between">
+      <CardHeader>
+        <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+          ⏱️ Time Tracker
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col justify-between flex-grow">
+        <div>
+          <p className="text-3xl font-extrabold text-transparent bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text">
+            {formatTime(seconds)}
+          </p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Total time spent on platform
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 
 
 
@@ -523,58 +583,101 @@ function RecentActivity() {
   );
 }
 
-const schedules = {
-  "In-Progress": [
-    { task: "Solve 5 problems on LeetCode", due: "2025-06-05" },
-    { task: "Prepare for CodeChef August Challenge", due: "2025-06-10" },
-  ],
-  Completed: [
-    { task: "Completed Codeforces Round #100", due: "2025-05-20" },
-    { task: "Finished HackerRank Gold Badge", due: "2025-05-15" },
-  ],
-};
 
 export function ScheduleTab() {
   const [tab, setTab] = useState("In-Progress");
+  const [user] = useAuthState(auth);
+  const [tasks, setTasks] = useState({ "In-Progress": [], Completed: [] });
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  return (
+useEffect(() => {
+  if (!user) return;
+
+  const unsub = onSnapshot(collection(db, "users", user.email, "tasks"), (snap) => {
+    const taskList = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const inProgress = taskList.filter((t) => !t.completed);
+    const completed = taskList.filter((t) => t.completed);
+    setTasks({
+      "In-Progress": inProgress,
+      Completed: completed,
+    });
+    setLoading(false);
+  });
+
+  return () => unsub();
+}, [user]);
+
+
+
+  return loading ? (
+    <div style={shimmerStyle} />
+  ) : (
     <Card className="rounded-2xl shadow-md w-full lg:col-span-2 flex flex-col">
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100">
             Task Scheduler
           </CardTitle>
-          <Button
-            variant="link"
-            onClick={() => alert("View all schedules clicked!")}
-            className="text-blue-600 dark:text-blue-400"
-          >
-            View All
-          </Button>
+         <Button
+  variant="link"
+  onClick={() => navigate("/tasks")}
+  className="text-blue-600 dark:text-blue-400"
+>
+  View All
+</Button>
         </div>
-        <Tabs value={tab} onValueChange={setTab} className="mt-2">
+        <Tabs value={tab} onValueChange={setTab} className="mt-4">
           <TabsList>
-            {["In-Progress", "Completed"].map((status) => (
-              <TabsTrigger key={status} value={status} className="capitalize">
-                {status}
-              </TabsTrigger>
-            ))}
+            <TabsTrigger value="In-Progress">In Progress</TabsTrigger>
+            <TabsTrigger value="Completed">Completed</TabsTrigger>
           </TabsList>
-          <CardContent>
-            <ul className="list-disc pl-5 text-gray-700 dark:text-gray-300">
-              {schedules[tab].map(({ task, due }, idx) => (
-                <li key={idx} className="mb-2">
-                  <span>{task}</span> - <time>{due}</time>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
         </Tabs>
       </CardHeader>
+
+      <CardContent className="space-y-3">
+        {tasks[tab].length === 0 ? (
+          <p className="text-gray-500 text-sm">No tasks found.</p>
+        ) : (
+          tasks[tab].slice(0, 5).map((task) => (
+            <div
+              key={task.id}
+              className="flex items-center justify-between border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 dark:bg-gray-800 shadow-sm"
+            >
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-full">
+                  {tab === "Completed" ? (
+                    <CheckCircle className="text-green-600 w-5 h-5" />
+                  ) : (
+                    <Clock10 className="text-yellow-600 w-5 h-5" />
+                  )}
+                </div>
+                <div>
+                  <h3 className="text-md font-medium text-gray-800 dark:text-white">
+                    {task.title}
+                  </h3>
+                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <CalendarClock className="w-4 h-4 mr-1" />
+                    {task.date} {task.time && `at ${task.time}`}
+                  </div>
+                </div>
+              </div>
+              <span
+                className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                  tab === "Completed"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-yellow-100 text-yellow-700"
+                }`}
+              >
+                {tab === "Completed" ? "COMPLETED" : "IN_PROGRESS"}
+              </span>
+            </div>
+          ))
+        )}
+      </CardContent>
     </Card>
   );
 }
-
 
 const graphData = [
   { date: "Mon", LeetCode: 2, CodeChef: 1, Codeforces: 3 },
@@ -761,25 +864,64 @@ function EventCalendar() {
   );
 }
 
-
 export default function Dashboard() {
+  const [showAlert, setShowAlert] = useState(false);
+  const [displayName, setDisplayName] = useState("");
+  const location = useLocation();
+
+  useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      setDisplayName(user.displayName || user.email?.split("@")[0] || "User");
+    }
+
+    // 🔥 Show alert only if redirected after login
+    if (location.state?.showWelcome) {
+      const delayToShow = setTimeout(() => {
+        setShowAlert(true);
+
+        const delayToHide = setTimeout(() => {
+          setShowAlert(false);
+        }, 3000); // show for 3s
+
+        return () => clearTimeout(delayToHide);
+      }, 500); // delay showing by 0.5s
+
+      return () => clearTimeout(delayToShow);
+    }
+  }, [location.state]);
+
   return (
     <div>
-    <Nav/>
-    <main className="max-w-7xl mx-auto">
-      <PlatformScores />
-     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 px-6 mt-10">
-  <ProblemOfTheDay />
-  <RecentActivity />
-  <ScheduleTab />
- <EventCalendar />
-  <div className="col-span-full flex justify-center">
-    
-  </div>
+      <Nav />
+      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6">
+        {showAlert && (
+          <div className="px-6 mt-4">
+            <Alert
+              message={`Welcome, ${displayName}!`}
+              type="success"
+              showIcon
+              closable
+              onClose={() => setShowAlert(false)}
+            />
+          </div>
+        )}
+
+        <PlatformScores />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
+          <ProblemOfTheDay />
+          <RecentActivity />
+          <ScheduleTab />
+          <div className="flex justify-center lg:justify-start lg:col-span-1">
+  <EventCalendar />
 </div>
 
-      <ActivityGraph />
-    </main>
+        </div>
+      </main>
+      <Footer/>
     </div>
   );
 }
+
+

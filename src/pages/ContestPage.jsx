@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import axios from "axios";
 import Nav from "./Nav";
 import { FaYoutube } from "react-icons/fa";
+import Footer from "./Footer";
 
 const platforms = ["All", "LeetCode", "CodeChef", "Codeforces"];
 const statuses = ["All", "Ongoing", "Upcoming", "Past"];
@@ -113,18 +114,26 @@ export default function ContestsPage() {
     return { days, hours, minutes, seconds };
   };
 
-  const handleAddToCalendar = (contest) => {
-    try {
-      const start = contest.startTime;
-      const end = contest.endTime;
-      const href = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
-        contest.platform + " " + contest.name
-      )}&dates=${start}/${end}&details=${encodeURIComponent(contest.url)}&sf=true&output=xml`;
-      window.open(href, "_blank");
-    } catch (error) {
-      alert("Invalid date provided for calendar event.");
-    }
-  };
+const handleAddToCalendar = (contest) => {
+  try {
+    const formatDate = (dateStr) => {
+      const date = new Date(dateStr);
+      return date.toISOString().replace(/[-:]|\.\d{3}/g, '');
+    };
+
+    const start = formatDate(contest.startTime);
+    const end = formatDate(contest.endTime);
+
+    const href = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+      contest.platform + " " + contest.name
+    )}&dates=${start}/${end}&details=${encodeURIComponent(contest.url)}&sf=true&output=xml`;
+
+    window.open(href, "_blank");
+  } catch (error) {
+    alert("Invalid date provided for calendar event.");
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-muted">
@@ -194,9 +203,6 @@ export default function ContestsPage() {
                       <Card className="transition-all hover:shadow-xl duration-300">
                         {!isPast && (
                           <div className="absolute top-3 right-3 z-10">
-                            <button title="Bookmark">
-                              <FaBookmark className="dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer text-lg sm:text-base" />
-                            </button>
                           </div>
                         )}
                         <CardHeader>
@@ -236,16 +242,29 @@ export default function ContestsPage() {
                               </Button>
                             </a>
                             {isPast ? (
-                              <a href={contest.videoUrl} target="_blank" rel="noopener noreferrer">
-                                <Button variant="ghost" size="sm" title="Watch Video Solution">
-                                  <FaYoutube className="text-red-600" />Video Solution
-                                </Button>
-                              </a>
-                            ) : (
-                              <Button variant="ghost" size="sm" onClick={() => handleAddToCalendar(contest)} title="Add to Google Calendar">
-                                <FaClock />Remind me
-                              </Button>
-                            )}
+  <a
+    href={
+      contest.platform === "Codeforces"
+        ? "https://www.youtube.com/playlist?list=PLcXpkI9A-RZLUfBSNp-YQBCOezZKbDSgB"
+        : contest.platform === "LeetCode"
+        ? "https://www.youtube.com/playlist?list=PLcXpkI9A-RZI6FhydNz3JBt_-p_i25Cbr"
+        : contest.platform === "CodeChef"
+        ? "https://www.youtube.com/playlist?list=PLcXpkI9A-RZIZ6lsE0KCcLWeKNoG45fYr"
+        : "#"
+    }
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <Button variant="ghost" size="sm" title="Watch Video Solution">
+      <FaYoutube className="text-red-600 mr-1" /> Video Solution
+    </Button>
+  </a>
+) : (
+  <Button variant="ghost" size="sm" onClick={() => handleAddToCalendar(contest)} title="Add to Google Calendar">
+    <FaClock className="mr-1" /> Remind me
+  </Button>
+)}
+
                           </div>
                         </CardContent>
                       </Card>
@@ -265,6 +284,7 @@ export default function ContestsPage() {
           )}
         </div>
       </div>
+      <Footer/>
     </div>
   );
 }

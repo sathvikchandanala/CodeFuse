@@ -12,6 +12,7 @@ import {
   FaHistory,
 } from "react-icons/fa";
 import Nav from "./Nav";
+import Footer from "./Footer";
 
 const modes = ["All", "online", "offline"];
 const prizeTiers = ["All", "10000", "50000", "100000"];
@@ -21,14 +22,21 @@ function createGoogleCalendarURL(hack) {
   const details = encodeURIComponent("Don't miss this hackathon!");
   const location = encodeURIComponent(hack.mode === "online" ? "Online" : "Offline");
 
-  const [startDateStr, endDateStr] = hack.submission_period_dates.split(" - ");
-
+  const [startPart, endPart] = hack.submission_period_dates.split(" - ");
+  
   try {
+    const yearMatch = endPart.match(/(\d{4})/);
+    if (!yearMatch) throw new Error("Year not found in end date.");
+
+    const year = yearMatch[1];
+    
+    const startDateStr = `${startPart}, ${year}`;
+    const endDateStr = endPart;
+
     const start = new Date(startDateStr);
     const end = new Date(endDateStr);
-    
-    const format = (d) =>
-      d.toISOString().replace(/[-:]|\.\d{3}/g, "").slice(0, 15); // Google Calendar format
+
+    const format = (d) => new Date(d).toISOString().replace(/[-:]|\.\d{3}/g, "");
 
     const startTime = format(start);
     const endTime = format(end);
@@ -39,6 +47,7 @@ function createGoogleCalendarURL(hack) {
     return "#";
   }
 }
+
 
 
 export default function HackathonsPage() {
@@ -144,9 +153,6 @@ export default function HackathonsPage() {
                 <Card key={hack.id} className="rounded-2xl shadow-md hover:shadow-xl transition duration-300">
                   <CardHeader className="flex flex-row justify-between items-start">
                     <CardTitle className="text-lg font-semibold">{hack.title}</CardTitle>
-                    <Button variant="ghost" size="icon">
-                      <FaBookmark className="text-muted-foreground hover:text-yellow-500" />
-                    </Button>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <img
@@ -197,6 +203,7 @@ export default function HackathonsPage() {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 }

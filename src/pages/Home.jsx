@@ -15,6 +15,7 @@ import {
   SiHackerearth,
 } from "react-icons/si";
 import { doc, setDoc, getDoc, updateDoc, deleteField } from "firebase/firestore";
+import Footer from "./Footer";
 
 const platforms = [
   { name: "LeetCode", icon: SiLeetcode, color: "#FFA116" },
@@ -171,6 +172,7 @@ export default function Home() {
           ))}
         </section>
       </main>
+      <Footer/>
     </div>
   );
 }
