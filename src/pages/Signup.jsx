@@ -64,11 +64,11 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:bg-[linear-gradient(145deg,_#0e0e0e,_#1a1a1a,_#202020,_#2a2a2a)] dark:shadow-[0_0_10px_rgba(255,255,255,0.05)]">
       <nav className="w-full flex justify-between items-center p-4">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(-1)}>
-          <AiOutlineArrowLeft className="text-xl" />
-          <span className="font-medium">Back</span>
+          <AiOutlineArrowLeft className="text-xl dark:text-white" />
+          <span className="font-medium dark:text-white">Back</span>
         </div>
         <div className="flex items-center gap-2">
           {theme === "dark" ? <HiMoon className="text-yellow-400" /> : <HiSun className="text-yellow-500" />}
@@ -95,7 +95,7 @@ export default function Signup() {
             {error && <Alert message={error} type="error" onClose={clearError} />}
             {success && <Alert message={success} type="success" onClose={clearSuccess} />}
 
-            <Card className="w-full max-w-md bg-[#1a1a1a] text-white border border-[#2a2a2a] rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.9)]">
+            <Card className="w-full max-w-md bg-[#1a1a1a] text-white border border-[#2a2a2a] rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.9)] ark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
               <CardHeader>
                 <CardTitle className="text-xl text-center font-semibold">Create your account</CardTitle>
               </CardHeader>

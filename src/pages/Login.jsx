@@ -87,6 +87,8 @@ export default function Login() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.message || "Login failed");
+         setTimeout(() => setError(null), 2000);
+    return;
       } else {
         setSuccessMessage("Login successful!");
         sessionStorage.setItem("justLoggedIn", "true");
@@ -97,6 +99,7 @@ export default function Login() {
       }
     } catch (err) {
       setError("Login failed");
+      setTimeout(() => setError(null), 2000);
     }
   };
 
@@ -242,7 +245,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white dark:bg-[linear-gradient(145deg,_#0e0e0e,_#1a1a1a,_#202020,_#2a2a2a)] dark:shadow-[0_0_10px_rgba(255,255,255,0.05)]">
       <nav className="w-full flex justify-between items-center p-4">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
           <AiOutlineArrowLeft className="text-xl" />
@@ -285,7 +288,7 @@ export default function Login() {
             {forgotMessage && <Alert message={forgotMessage} type="success" onClose={() => setForgotMessage("")} />}
 
             {!showForgotPassword && (
-              <Card className="w-full max-w-md mx-auto bg-[#1a1a1a] text-white border border-[#2a2a2a] rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.9)]">
+              <Card className="w-full max-w-md mx-auto bg-[#1a1a1a] text-white border border-[#2a2a2a] rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.9)] ark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
                 <CardHeader>
                   <CardTitle className="text-xl text-center font-semibold">Log in to your account</CardTitle>
                 </CardHeader>
