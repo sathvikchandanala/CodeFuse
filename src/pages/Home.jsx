@@ -112,7 +112,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-background text-foreground overflow-x-hidden dark:bg-[linear-gradient(145deg,_#0e0e0e,_#1a1a1a,_#202020,_#2a2a2a)] dark:shadow-[0_0_10px_rgba(255,255,255,0.05)]">
       <Nav />
       <main className="flex-grow container mx-auto px-4 sm:px-6 py-12">
         {error && <Alert message={error} type="error" onClose={() => setError("")} />}
@@ -121,7 +121,7 @@ export default function Home() {
           {platforms.map(({ name, icon: Icon, color, comingSoon }) => (
             <div
               key={name}
-              className="w-full max-w-sm p-6 rounded-2xl border border-border shadow-xl bg-card space-y-6 text-center transform transition duration-300 hover:scale-105 hover:shadow-2xl"
+              className="w-full max-w-sm p-6 rounded-2xl border border-gray-70 shadow-md bg-card space-y-6 text-center transform transition duration-300 hover:shadow-2xl dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700"
             >
               <div className="flex justify-center relative">
                 <Icon
@@ -149,12 +149,12 @@ export default function Home() {
                     placeholder={`Enter ${name} username`}
                     value={usernames[name] || ""}
                     onChange={(e) => handleChange(name, e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg bg-background border-border focus:outline-none focus:ring-2 focus:ring-primary transition duration-300"
+                    className="w-full px-4 py-2 border rounded-lg bg-background border-border focus:outline-none focus:ring-2 focus:ring-primary transition duration-300 dark:bg-[#222] dark:text-white dark:placeholder:text-zinc-500"
                   />
                   <div className="flex items-center justify-between gap-2 w-full">
                     <Button
                       onClick={() => handleUpdate(name)}
-                      className="px-4 py-2 text-sm"
+                      className="px-4 py-2 text-sm dark:bg-gradient-to-r dark:from-[#1f1f1f] dark:via-[#2b2b2b] dark:to-[#3b3b3b] dark:text-white dark:font-semibold dark:rounded-xl dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)] dark:hover:scale-[1.03] transition-all duration-300"
                     >
                       Link
                     </Button>

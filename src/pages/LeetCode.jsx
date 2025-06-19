@@ -67,7 +67,7 @@ export default function LeetCode() {
 
     return (
       <>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 font-bold">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 font-bold ">
           {columns.map((c) => (
             <StatCard
               key={c.label}
@@ -85,7 +85,7 @@ export default function LeetCode() {
           <StatLine label="Rating" value={profile.rating || "–"} icon={<FaTrophy />} color="text-purple-600" />
         </div>
 
-        <div className="mt-6 rounded-xl border p-4 bg-muted">
+        <div className="mt-6 rounded-xl border p-4">
           <h3 className="font-semibold mb-2">Activity Heatmap</h3>
           <style>{`
   .react-calendar-heatmap .color-empty {
@@ -136,10 +136,10 @@ export default function LeetCode() {
   };
 
   return (
-    <div>
+    <div className="dark:bg-[linear-gradient(145deg,_#0e0e0e,_#1a1a1a,_#202020,_#2a2a2a)] dark:shadow-[0_0_10px_rgba(255,255,255,0.05)]">
     <Nav/>
     <div className="max-w-4xl mx-auto p-4 sm:p-10">
-      <Card className="rounded-2xl shadow-lg">
+      <Card className="rounded-2xl shadow-lg dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
         <CardHeader>
   <CardTitle className="text-2xl flex items-center gap-2">
     <SiLeetcode className="text-orange-500 w-6 h-6" />

@@ -6,7 +6,6 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-
 import { useNavigate } from "react-router-dom";
 import Footer from "./Footer";
 import { useLocation } from "react-router-dom";
@@ -17,16 +16,15 @@ import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/comp
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { FiBookmark, FiExternalLink } from "react-icons/fi";
+import {FiExternalLink } from "react-icons/fi";
 import { Calendar } from "@/components/ui/calendar";
 import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { db,auth } from "../db"; // your firestore config
+import { db,auth } from "../db"; 
 import axios from "axios"
 import { CalendarClock, CheckCircle, XCircle, Laptop2,Clock10  } from "lucide-react";
 import { onSnapshot, collection } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { KeepAlive } from 'react-activation';
 import {
   ResponsiveContainer,
   LineChart,
@@ -34,10 +32,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import React,{useState,useEffect,useRef } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useEffect, useState } from "react";
+import { getDocs } from "firebase/firestore";
+import { format, isSameDay, isToday, parseISO } from "date-fns";
 import { CalendarPlus } from "lucide-react";
-import { format,isSameDay,isToday } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import Alert from "./Alert";
 import { SiLeetcode, SiCodeforces, SiCodechef } from "react-icons/si";
@@ -78,7 +76,7 @@ const shimmerKeyframes = `
 const supportedPlatforms = ["LeetCode", "CodeChef", "Codeforces"];
 const getPlatformIcon = (platform) => {
   if (platform === "LeetCode") return <SiLeetcode className="text-orange-500 w-5 h-5" />;
-  if (platform === "CodeChef") return <SiCodechef className="text-purple-700 w-5 h-5" />;
+  if (platform === "CodeChef") return <SiCodechef className="text-[#5B4638] w-5 h-5" />;
   if (platform === "Codeforces") return <SiCodeforces className="text-blue-600 w-5 h-5" />;
   return null;
 };
@@ -105,7 +103,7 @@ useEffect(() => {
     setLoading(false);
   });
 
-  return () => unsubscribe(); // cleanup
+  return () => unsubscribe(); 
 }, []);
 
 
@@ -127,7 +125,7 @@ useEffect(() => {
         {supportedPlatforms.map((platform) => (
           <Card
   key={platform}
-  className="rounded-2xl shadow-md hover:shadow-lg transition flex flex-col justify-between"
+  className="rounded-2xl shadow-md hover:shadow-lg transition flex flex-col justify-between dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700"
 >
   <CardHeader>
     <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
@@ -161,11 +159,18 @@ useEffect(() => {
 
         {/* View More with Down Arrow */}
         <Link
-          to={`/${platform.toLowerCase()}`}
-          className="mt-4 inline-flex items-center justify-center text-sm text-black-600 hover:text-gray-600 transition font-bold"
-        >
-          View More <FaChevronDown className="ml-2" />
-        </Link>
+  to={`/${platform.toLowerCase()}`}
+  className="mt-4 inline-flex items-center justify-center text-sm font-bold 
+             text-gray-700 hover:text-gray-900 
+             dark:bg-gradient-to-r dark:from-[#1c1c1c] dark:via-[#2a2a2a] dark:to-[#3a3a3a] 
+             dark:text-gray-200 dark:hover:text-white 
+             dark:rounded-xl dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] 
+             dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)] 
+             dark:hover:scale-[1.03] transition-all duration-300 no-underline"
+>
+  View More <FaChevronDown className="ml-2" />
+</Link>
+
       </>
     ) : (
       <Link
@@ -263,7 +268,7 @@ function ProblemOfTheDay() {
   const difficultyColors = {
     easy: "bg-green-400 text-white-800 ",
     medium: "bg-yellow-400 text-white-800 ",
-    hard: "bg-red-400 text-white-800 ",
+    hard: "bg-red-600 text-white-800 ",
   };
 
   const loadingCount = 1;
@@ -272,7 +277,7 @@ function ProblemOfTheDay() {
     <>
       <style>{shimmerKeyframes}</style>
 
-      <Card className="rounded-2xl shadow-md lg:col-span-2 w-full max-w-4xl mx-auto">
+      <Card className="rounded-2xl shadow-md lg:col-span-2 w-full max-w-4xl mx-auto dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
         <CardHeader>
           <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100">
             Problem of the Day
@@ -280,9 +285,9 @@ function ProblemOfTheDay() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="LeetCode">
-            <TabsList className="mb-4">
+            <TabsList className="mb-4 dark:bg-gradient-to-r dark:from-[#1a1a1a] dark:via-[#2a2a2a] dark:to-[#1f1f1f] dark:border dark:border-zinc-800 dark:rounded-xl dark:shadow-md">
               {Object.keys(problems).map((platform) => (
-                <TabsTrigger key={platform} value={platform} className="capitalize">
+                <TabsTrigger key={platform} value={platform} className="capitalize dark:data-[state=active]:bg-[#333333] dark:data-[state=active]:text-white dark:data-[state=active]:shadow-inner dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#2a2a2a] dark:px-4 dark:py-2 dark:rounded-lg transition-all">
                   {platform}
                 </TabsTrigger>
               ))}
@@ -328,20 +333,18 @@ function ProblemOfTheDay() {
                       return (
                         <Card
                           key={problem.title}
-                          className="relative rounded-2xl shadow-md w-full max-w-3xl mx-auto"
+                          className="relative rounded-2xl shadow-md w-full max-w-3xl mx-auto border border-gray-70 bg-mute"
                         >
 
-                          
-
                           <CardHeader className="px-6">
-  <div className="flex flex-wrap items-center justify-between gap-3">
+  <div className="flex flex-wrap items-center justify-between gap-3 ">
     <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-100 break-words">
       {getPlatformIcon(platform)}
       {problem.title}
     </CardTitle>
 
     <span
-      className={`px-3 py-1 rounded-full text-sm font-semibold ${diffClass}`}
+      className={`px-3 py-1 rounded-full text-sm font-semibold ${diffClass} text-black`}
     >
       {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
     </span>
@@ -349,26 +352,25 @@ function ProblemOfTheDay() {
 </CardHeader>
 
 
-
-                          <CardContent>
-                            <h5 className="text-gray-600 font-medium">Platform: {platform}</h5>
-                          </CardContent>
-
                           {problem.tags && problem.tags.length > 0 && (
                             <div className="px-6 pb-2 flex flex-wrap gap-2">
                               {problem.tags.map((tag) => (
                                 <span
-                                  key={tag}
-                                  className="bg-gray-100 text-black px-3 py-1 rounded-full text-xs font-medium border"
-                                >
-                                  {tag}
-                                </span>
+  key={tag}
+  className="px-3 py-1 rounded-full text-xs font-medium border 
+             text-black border-gray-70
+             dark:bg-zinc-800/70 dark:text-zinc-300 
+             dark:border-zinc-700 dark:shadow-[0_0_4px_rgba(255,255,255,0.05)] 
+             hover:bg-zinc-700 transition">
+  {tag}
+</span>
+
                               ))}
                             </div>
                           )}
 
-                          <CardFooter className="flex justify-center">
-                            <Button asChild className="w-1/3 px-10 flex items-center gap-2 bg-blue-600">
+                          <CardFooter className="flex justify-left">
+                            <Button asChild className="w-1/3 px-10 flex rounded-full items-center gap-2 bg-black text-white dark:bg-gradient-to-r dark:from-[#1f1f1f] dark:via-[#2b2b2b] dark:to-[#3b3b3b] dark:text-white dark:font-semibold dark:rounded-xl dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)] dark:hover:scale-[1.03] transition-all duration-300">
                               <a href={problem.link} target="_blank" rel="noopener noreferrer">
                                 Solve <FiExternalLink size={18} />
                               </a>
@@ -413,7 +415,7 @@ export function TimeTrackerCard() {
   };
 
   return (
-    <Card className="rounded-2xl shadow-md hover:shadow-lg transition flex flex-col justify-between">
+    <Card className="rounded-2xl shadow-md hover:shadow-lg transition flex flex-col justify-between dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
       <CardHeader>
         <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
           ⏱️ Time Tracker
@@ -512,7 +514,7 @@ function RecentActivity() {
   }, []);
 
   return (
-    <Card className="rounded-2xl shadow-md w-full lg:col-span-2">
+    <Card className="rounded-2xl shadow-md w-full lg:col-span-2 dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
       <CardHeader>
         <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           Recent Activity
@@ -520,9 +522,9 @@ function RecentActivity() {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="LeetCode">
-          <TabsList className="mb-4">
+          <TabsList className="mb-4 dark:bg-gradient-to-r dark:from-[#1a1a1a] dark:via-[#2a2a2a] dark:to-[#1f1f1f] dark:border dark:border-zinc-800 dark:rounded-xl dark:shadow-md">
             {Object.keys(activities).map((platform) => (
-              <TabsTrigger key={platform} value={platform} className="capitalize">
+              <TabsTrigger key={platform} value={platform} className="capitalize dark:data-[state=active]:bg-[#333333] dark:data-[state=active]:text-white dark:data-[state=active]:shadow-inner dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#2a2a2a] dark:px-4 dark:py-2 dark:rounded-lg transition-all">
                 {platform}
               </TabsTrigger>
             ))}
@@ -539,7 +541,7 @@ function RecentActivity() {
                   {logs.map((log, index) => (
                     <div
                       key={index}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm bg-white dark:bg-zinc-900"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-gray-70 rounded-xl shadow-sm"
                     >
                       <div className="space-y-1">
                         <div className="text-md font-semibold text-gray-800 dark:text-gray-100">
@@ -613,7 +615,7 @@ useEffect(() => {
   return loading ? (
     <div style={shimmerStyle} />
   ) : (
-    <Card className="rounded-2xl shadow-md w-full lg:col-span-2 flex flex-col">
+    <Card className="rounded-2xl shadow-md w-full lg:col-span-2 flex flex-col dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100">
@@ -622,15 +624,15 @@ useEffect(() => {
          <Button
   variant="link"
   onClick={() => navigate("/tasks")}
-  className="text-blue-600 dark:text-blue-400"
+  className="text-blue-600 hover:no-underline dark:bg-gradient-to-r dark:from-[#1f1f1f] dark:via-[#2b2b2b] dark:to-[#3b3b3b] dark:text-white dark:font-semibold dark:rounded-xl dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)] dark:hover:scale-[1.03] no-underline transition-all duration-300"
 >
   View All
 </Button>
         </div>
         <Tabs value={tab} onValueChange={setTab} className="mt-4">
-          <TabsList>
-            <TabsTrigger value="In-Progress">In Progress</TabsTrigger>
-            <TabsTrigger value="Completed">Completed</TabsTrigger>
+          <TabsList className="dark:bg-gradient-to-r dark:from-[#1a1a1a] dark:via-[#2a2a2a] dark:to-[#1f1f1f] dark:border dark:border-zinc-800 dark:rounded-xl dark:shadow-md">
+            <TabsTrigger value="In-Progress" className="dark:data-[state=active]:bg-[#333333] dark:data-[state=active]:text-white dark:data-[state=active]:shadow-inner dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#2a2a2a] dark:px-4 dark:py-2 dark:rounded-lg transition-all">In Progress</TabsTrigger>
+            <TabsTrigger value="Completed" className="dark:data-[state=active]:bg-[#333333] dark:data-[state=active]:text-white dark:data-[state=active]:shadow-inner dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#2a2a2a] dark:px-4 dark:py-2 dark:rounded-lg transition-all">Completed</TabsTrigger>
           </TabsList>
         </Tabs>
       </CardHeader>
@@ -642,14 +644,14 @@ useEffect(() => {
           tasks[tab].slice(0, 5).map((task) => (
             <div
               key={task.id}
-              className="flex items-center justify-between border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 dark:bg-gray-800 shadow-sm"
+              className="flex items-center justify-between rounded-xl px-4 py-3 border border-gray-70 shadow-sm"
             >
               <div className="flex items-start gap-4">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-full">
+                <div className="p-2 rounded-full">
                   {tab === "Completed" ? (
-                    <CheckCircle className="text-green-600 w-5 h-5" />
+                    <CheckCircle className="text-green-400 w-5 h-5" />
                   ) : (
-                    <Clock10 className="text-yellow-600 w-5 h-5" />
+                    <Clock10 className="text-yellow-500 w-5 h-5" />
                   )}
                 </div>
                 <div>
@@ -665,8 +667,8 @@ useEffect(() => {
               <span
                 className={`text-xs font-semibold px-2 py-1 rounded-full ${
                   tab === "Completed"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-yellow-100 text-yellow-700"
+                    ? "bg-green-400 text-black"
+                    : "bg-yellow-400 text-black"
                 }`}
               >
                 {tab === "Completed" ? "COMPLETED" : "IN_PROGRESS"}
@@ -766,21 +768,60 @@ function MediumActivityCard() {
   );
 }
 
-const eventsData = {
-  "2025-06-01": [
-    { id: 1, title: "Hackathon Registration Closes" },
-    { id: 2, title: "Resume Review Workshop" },
-  ],
-  "2025-06-02": [
-    { id: 3, title: "Company X Assessment Test" },
-    { id: 4, title: "Mock Interview Session" },
-  ],
+const handleAddToGoogleCalendar = (events, dateKey) => {
+  const firstEvent = events[0];
+  const startDateTime = new Date(`${dateKey} ${firstEvent.time}`);
+  const endDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000); 
+
+  const start = format(startDateTime, "yyyyMMdd'T'HHmmss");
+  const end = format(endDateTime, "yyyyMMdd'T'HHmmss");
+
+  const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+    firstEvent.title
+  )}&dates=${start}/${end}&details=${encodeURIComponent(
+    "Added via EventCalendar"
+  )}`;
+
+  window.open(url, "_blank");
 };
 
-function EventCalendar() {
+
+export function EventCalendar() {
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [eventsData, setEventsData] = useState({});
+  const auth = getAuth();
+  const user = auth.currentUser;
 
   const formatKey = (date) => format(date, "yyyy-MM-dd");
+useEffect(() => {
+  if (!user) return;
+
+  const fetchEvents = async () => {
+    const tasksRef = collection(db, "users", user.email, "tasks");
+    const snapshot = await getDocs(tasksRef);
+    const data = {};
+
+    snapshot.forEach((doc) => {
+      const task = doc.data();
+      const dateKey = task.date;
+
+      if (!task.completed) {
+        if (!data[dateKey]) data[dateKey] = [];
+
+        data[dateKey].push({
+          id: doc.id,
+          title: task.title,
+          time: task.time,
+        });
+      }
+    });
+
+    setEventsData(data);
+  };
+
+  fetchEvents();
+}, [user]);
+
 
   const renderDay = (day) => {
     const key = formatKey(day);
@@ -793,7 +834,7 @@ function EventCalendar() {
       "aspect-square w-10 h-10 sm:w-12 sm:h-12 text-sm rounded-md flex flex-col items-center justify-center relative transition-colors";
 
     const selectedClass = isSelected
-      ? "bg-primary text-white hover:bg-primary/90"
+      ? "bg-black dark:bg-white dark:text-black text-white hover:bg-primary/90"
       : "hover:bg-accent hover:text-accent-foreground";
 
     const currentDayClass = isCurrentDay && !isSelected
@@ -815,54 +856,60 @@ function EventCalendar() {
 
     if (hasEvents) {
       return (
-        <TooltipProvider delayDuration={100}>
-          <Tooltip>
-            <TooltipTrigger asChild>{buttonContent}</TooltipTrigger>
-            <TooltipContent className="rounded-xl shadow-lg bg-background border w-64">
-              <h4 className="text-sm font-semibold mb-1 text-primary">
-                Events on {format(day, "PPP")}
-              </h4>
-              <ul className="mb-2 text-sm text-muted-foreground">
-                {events.map((event) => (
-                  <li key={event.id}>• {event.title}</li>
-                ))}
-              </ul>
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full flex gap-1 justify-center"
-              >
-                <CalendarPlus size={16} /> Add Event
-              </Button>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      );
+ <div className="w-full h-full flex items-center justify-center">
+    {hasEvents ? (
+      <TooltipProvider delayDuration={100}>
+        <Tooltip>
+          <TooltipTrigger asChild>{buttonContent}</TooltipTrigger>
+          <TooltipContent className="rounded-xl shadow-lg bg-background border w-64">
+            <h4 className="text-sm font-semibold mb-1 text-primary">
+              Events on {format(day, "PPP")}
+            </h4>
+            <ul className="mb-2 text-sm text-muted-foreground">
+              {events.map((event) => (
+                <li key={event.id}>• {event.title} ({event.time})</li>
+              ))}
+            </ul>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full flex gap-1 justify-center text-black dark:text-white"
+              onClick={() => handleAddToGoogleCalendar(events, key)}
+            >
+              <CalendarPlus size={16} /> Add Reminder
+            </Button>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ) : (
+      buttonContent
+    )}
+  </div>
+);
+
     }
 
     return buttonContent;
   };
 
   return (
-    <div className="p-4 sm:p-6 max-w-md mx-auto">
-      <div className="rounded-2xl shadow-md border border-border bg-card p-4">
+    <div className="p-4 sm:p-6 max-w-md mx-auto ">
+      <div className="rounded-2xl shadow-md p-4 border border-gray-70 dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
         <Calendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={setSelectedDate}
-          components={{
-            Day: ({ date }) => (
-              <div className="flex items-center justify-center">
-                {renderDay(date)}
-              </div>
-            ),
-          }}
-          className="w-full"
-        />
+  mode="single"
+  selected={selectedDate}
+  onSelect={setSelectedDate}
+  components={{
+    Day: ({ date }) => renderDay(date),
+  }}
+  className="w-full"
+/>
+
       </div>
     </div>
   );
 }
+
 
 export default function Dashboard() {
   const [showAlert, setShowAlert] = useState(false);
@@ -893,7 +940,7 @@ export default function Dashboard() {
   }, [location.state]);
 
   return (
-    <div>
+    <div className="dark:bg-[linear-gradient(145deg,_#0e0e0e,_#1a1a1a,_#202020,_#2a2a2a)] dark:shadow-[0_0_10px_rgba(255,255,255,0.05)]">
       <Nav />
       <main className="w-full max-w-7xl mx-auto px-4 sm:px-6">
         {showAlert && (

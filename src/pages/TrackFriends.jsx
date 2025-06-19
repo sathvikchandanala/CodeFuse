@@ -88,7 +88,7 @@ const TrackFriends = () => {
   const leaderboardItems = [
     { name: "LeetCode", icon: <SiLeetcode className="text-yellow-600" />, key: "leetcode" },
     { name: "Codeforces", icon: <SiCodeforces className="text-blue-600" />, key: "codeforces" },
-    { name: "CodeChef", icon: <SiCodechef className="text-purple-600" />, key: "codechef" },
+    { name: "CodeChef", icon: <SiCodechef className="text-[#5B4638]" />, key: "codechef" },
   ];
 
   const getPlatformScore = (platform, user) => {
@@ -116,7 +116,7 @@ const TrackFriends = () => {
   };
 
   return (
-    <>
+    <div className="dark:bg-[linear-gradient(145deg,_#0e0e0e,_#1a1a1a,_#202020,_#2a2a2a)] dark:shadow-[0_0_10px_rgba(255,255,255,0.05)]">
       <Nav />
       {alert.message && (
         <Alert
@@ -126,15 +126,15 @@ const TrackFriends = () => {
         />
       )}
       <div className="p-4 md:p-8 max-w-6xl mx-auto">
-        <Card className="mb-6">
+        <Card className="mb-6 dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
           <CardHeader>
             <CardTitle className="text-xl md:text-2xl">Track Your Friends</CardTitle>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="leetcode" value={platform} onValueChange={setPlatform}>
-              <TabsList>
+              <TabsList className="dark:bg-gradient-to-r dark:from-[#1a1a1a] dark:via-[#2a2a2a] dark:to-[#1f1f1f] dark:border dark:border-zinc-800 dark:rounded-xl dark:shadow-md">
                 {leaderboardItems.map(({ name, key }) => (
-                  <TabsTrigger key={key} value={key}>{name}</TabsTrigger>
+                  <TabsTrigger className="dark:data-[state=active]:bg-[#333333] dark:data-[state=active]:text-white dark:data-[state=active]:shadow-inner dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#2a2a2a] dark:px-4 dark:py-2 dark:rounded-lg transition-all" key={key} value={key}>{name}</TabsTrigger>
                 ))}
               </TabsList>
               {leaderboardItems.map(({ name, icon, key }) => {
@@ -154,7 +154,7 @@ const TrackFriends = () => {
                         onChange={(e) => setUsernameInput(e.target.value)}
                         className="flex-1"
                       />
-                      <Button onClick={addFriend}>Add</Button>
+                      <Button onClick={addFriend} className="dark:bg-gradient-to-r dark:from-[#1f1f1f] dark:via-[#2b2b2b] dark:to-[#3b3b3b] dark:text-white dark:font-semibold dark:rounded-xl dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)] dark:hover:scale-[1.03] transition-all duration-300">Add</Button>
                     </div>
                     <Separator className="my-4" />
                     <div className="grid grid-cols-3 font-semibold mb-2 px-2 hidden md:grid">
@@ -196,9 +196,8 @@ const TrackFriends = () => {
                                 {name !== username[key] ? (
                                   <div className="flex justify-start md:justify-end w-full">
                                     <Button
-                                      variant="destructive"
                                       size="sm"
-                                      className="px-2 text-xs"
+                                      className="px-2 text-xs bg-red-600 text-white"
                                       onClick={async () => {
                                         const currentList = friendsData[key];
                                         const updated = currentList.filter(friend => friend !== name);
@@ -263,7 +262,7 @@ const TrackFriends = () => {
         )}
       </div>
       <Footer/>
-    </>
+    </div>
   );
 };
 

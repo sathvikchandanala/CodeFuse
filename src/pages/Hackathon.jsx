@@ -70,7 +70,7 @@ export default function HackathonsPage() {
     .sort((a, b) => new Date(b.postedDate) - new Date(a.postedDate));
 
   return (
-    <div className="min-h-screen bg-muted">
+    <div className="min-h-screen dark:bg-[linear-gradient(145deg,_#0e0e0e,_#1a1a1a,_#202020,_#2a2a2a)] dark:shadow-[0_0_10px_rgba(255,255,255,0.05)]">
       <style>{`
         @keyframes shimmer {
           0% { background-position: -400px 0; }
@@ -87,7 +87,7 @@ export default function HackathonsPage() {
       <Nav />
       <div className="max-w-[1300px] mx-auto px-4 py-8 flex gap-6 flex-col lg:flex-row">
         <div className="w-full lg:w-[260px] flex-shrink-0 lg:sticky top-20">
-          <div className="p-4 rounded-xl border bg-white shadow-md dark:bg-black">
+          <div className="p-4 rounded-xl border bg-white shadow-md dark:bg-[#191919]/90 dark:ring-1 dark:ring-zinc-700 dark:shadow-lg">
             <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
               <FaFilter /> Filter Hackathons
             </h2>
@@ -150,7 +150,7 @@ export default function HackathonsPage() {
               <p className="text-center col-span-full text-muted-foreground">No hackathons match the selected filters.</p>
             ) : (
               filteredHackathons.map((hack) => (
-                <Card key={hack.id} className="rounded-2xl shadow-md hover:shadow-xl transition duration-300">
+                <Card key={hack.id} className="rounded-2xl shadow-md hover:shadow-xl transition duration-300 dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
                   <CardHeader className="flex flex-row justify-between items-start">
                     <CardTitle className="text-lg font-semibold">{hack.title}</CardTitle>
                   </CardHeader>
@@ -173,7 +173,9 @@ export default function HackathonsPage() {
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {hack.themes?.map((theme, index) => (
-                        <Badge key={index} className="text-xs border border-black bg-white text-black">{theme.name}</Badge>
+                        <Badge key={index} className="text-xs border border-black bg-white text-black  dark:bg-zinc-800/70 dark:text-zinc-300 
+             dark:border-zinc-700 dark:shadow-[0_0_4px_rgba(255,255,255,0.05)] 
+             hover:bg-zinc-700 transition">{theme.name}</Badge>
                       ))}
                     </div>
                     <div className="text-xs text-muted-foreground font-bold">
@@ -181,7 +183,7 @@ export default function HackathonsPage() {
                     </div>
                     <div className="flex items-center gap-4 mt-2">
                       <a href={hack.url} target="_blank" rel="noopener noreferrer">
-                        <Button variant="default" size="sm" className="bg-blue-600">
+                        <Button variant="default" size="sm" className="bg-blue-600 text-white dark:bg-gradient-to-r dark:from-[#1f1f1f] dark:via-[#2b2b2b] dark:to-[#3b3b3b] dark:text-white dark:font-semibold dark:rounded-xl dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)] dark:hover:scale-[1.03] transition-all duration-300">
                           Join Hackathon
                         </Button>
                       </a>

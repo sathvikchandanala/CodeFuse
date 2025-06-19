@@ -35,12 +35,13 @@ import { SiLeetcode, SiCodechef, SiHackerrank, SiCodeforces } from "react-icons/
 
 const platformIcons = {
   github: <FiGithub className="text-blue-600 dark:text-blue-400" size={20} />,
-  leetcode: <SiLeetcode className="text-blue-600 dark:text-blue-400" size={20} />,
-  codechef: <SiCodechef className="text-blue-600 dark:text-blue-400" size={20} />,
+  leetcode: <SiLeetcode className="text-[#FFA116] dark:text-[#FFA116]" size={20} />,       // LeetCode orange
+  codechef: <SiCodechef className="text-[#5B4638] dark:text-[#5B4638]" size={20} />,       // CodeChef brown
   hackerrank: <SiHackerrank className="text-blue-600 dark:text-blue-400" size={20} />,
-  codeforces: <SiCodeforces className="text-blue-600 dark:text-blue-400" size={20} />,
+  codeforces: <SiCodeforces className="text-[#1F8ACB] dark:text-[#1F8ACB]" size={20} />,   // Codeforces blue
   default: <FiLink className="text-blue-600 dark:text-blue-400" size={20} />,
 };
+
 
 export default function Profile() {
   const [user, loading, error] = useAuthState(auth);
@@ -127,10 +128,10 @@ export default function Profile() {
     );
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground  dark:bg-[linear-gradient(145deg,_#0e0e0e,_#1a1a1a,_#202020,_#2a2a2a)] dark:shadow-[0_0_10px_rgba(255,255,255,0.05)]">
       <Nav />
       <main className="max-w-4xl mx-auto p-4 space-y-10 pt-10">
-        <Card className="shadow-lg rounded-lg border border-gray-200 dark:border-gray-700">
+        <Card className="shadow-lg rounded-lg border border-gray-200 dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-bold">
               <FiUser className="text-blue-600 dark:text-blue-400" /> Your Profile
@@ -150,7 +151,7 @@ export default function Profile() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg rounded-lg border border-gray-200 dark:border-gray-700">
+        <Card className="shadow-lg rounded-lg border border-gray-200 dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-bold">
               <FiLink className="text-blue-600 dark:text-blue-400" /> Connected Platforms
@@ -166,7 +167,7 @@ export default function Profile() {
                   return (
                     <li
                       key={platform}
-                      className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900 transition cursor-default"
+                      className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3 rounded-md transition cursor-default"
                       title={username ? `Linked as ${username}` : "Not linked"}
                     >
                       <div className="flex items-center gap-2 min-w-0">
@@ -188,7 +189,7 @@ export default function Profile() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
+        <Card className="shadow-lg rounded-lg border border-gray-200 max-w-md mx-auto dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl font-bold">
               <FiLock className="text-blue-600 dark:text-blue-400" /> Change Password
@@ -206,12 +207,12 @@ export default function Profile() {
                   placeholder="Enter current password"
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md  bg-gray-50  px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none dark:bg-[#222] dark:text-white dark:placeholder:text-zinc-500"
                 />
                 <button
                   type="button"
                   onClick={() => setShowOldPassword((v) => !v)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600 dark:hover:text-blue-400"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"
                   aria-label={showOldPassword ? "Hide password" : "Show password"}
                 >
                   {showOldPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
@@ -230,12 +231,12 @@ export default function Profile() {
                   placeholder="Enter new password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md  bg-gray-50  px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none dark:bg-[#222] dark:text-white dark:placeholder:text-zinc-500"
                 />
                 <button
                   type="button"
                   onClick={() => setShowNewPassword((v) => !v)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600 dark:hover:text-blue-400"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"
                   aria-label={showNewPassword ? "Hide password" : "Show password"}
                 >
                   {showNewPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
@@ -254,7 +255,7 @@ export default function Profile() {
             <Button
               disabled={isChangingPassword}
               onClick={handleChangePassword}
-              className="w-40 flex items-center justify-center gap-2"
+              className="w-40 flex items-center justify-center gap-2 dark:bg-gradient-to-r dark:from-[#1f1f1f] dark:via-[#2b2b2b] dark:to-[#3b3b3b] dark:text-white dark:font-semibold dark:rounded-xl dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)] dark:hover:scale-[1.03] transition-all duration-300"
             >
               {isChangingPassword && (
                 <FiRefreshCw className="animate-spin" size={20} />

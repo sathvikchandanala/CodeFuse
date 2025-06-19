@@ -19,7 +19,7 @@ const getPlatformIcon = (platform) => {
     case "LeetCode":
       return <SiLeetcode className={`${commonClasses} text-orange-500`} />;
     case "CodeChef":
-      return <SiCodechef className={`${commonClasses} text-purple-600`} />;
+      return <SiCodechef className={`${commonClasses} text-[#5B4638]`} />;
     case "Codeforces":
       return <SiCodeforces className={`${commonClasses} text-blue-600`} />;
     default:
@@ -32,7 +32,7 @@ const getPlatformTagClass = (platform) => {
     case "LeetCode":
       return "bg-orange-100 text-orange-800";
     case "CodeChef":
-      return "bg-purple-100 text-purple-800";
+      return "bg-[#5B4638] text-white";
     case "Codeforces":
       return "bg-blue-100 text-blue-800";
     default:
@@ -136,11 +136,12 @@ const handleAddToCalendar = (contest) => {
 
 
   return (
-    <div className="min-h-screen bg-muted">
+    <div className="min-h-screen dark:bg-[linear-gradient(145deg,_#0e0e0e,_#1a1a1a,_#202020,_#2a2a2a)] dark:shadow-[0_0_10px_rgba(255,255,255,0.05)]">
       <Nav />
       <div className="max-w-[1300px] mx-auto px-4 py-8 flex gap-6 flex-col lg:flex-row">
         <div className="w-full lg:w-[260px] flex-shrink-0 lg:sticky top-20">
-          <div className="p-4 rounded-xl border bg-white shadow-md dark:bg-black">
+          <div className="p-4 rounded-xl border bg-white shadow-md dark:bg-[#191919]/90 dark:ring-1 dark:ring-zinc-700 dark:shadow-lg">
+
             <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
               <FaFilter /> Filter Contests
             </h2>
@@ -200,7 +201,7 @@ const handleAddToCalendar = (contest) => {
                   const isPast = now > end;
                   return (
                     <div key={contest.id || i} className="relative">
-                      <Card className="transition-all hover:shadow-xl duration-300">
+                      <Card className="transition-all hover:shadow-xl duration-300 dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
                         {!isPast && (
                           <div className="absolute top-3 right-3 z-10">
                           </div>
@@ -237,7 +238,7 @@ const handleAddToCalendar = (contest) => {
                           <p className="text-muted-foreground">Duration: {contest.duration}</p>
                           <div className="flex items-center gap-4 mt-2">
                             <a href={contest.url} target="_blank" rel="noopener noreferrer">
-                              <Button variant="default" size="sm" className="bg-blue-600">
+                              <Button variant="default" size="sm" className="bg-blue-600 text-white dark:bg-gradient-to-r dark:from-[#1f1f1f] dark:via-[#2b2b2b] dark:to-[#3b3b3b] dark:text-white dark:font-semibold dark:rounded-xl dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)] dark:hover:scale-[1.03] transition-all duration-300">
                                 {isPast ? "View Contest" : "Join Contest"}
                               </Button>
                             </a>
@@ -274,7 +275,7 @@ const handleAddToCalendar = (contest) => {
           </div>
           {!loading && filteredContests.length > visibleCount && (
             <div className="text-center mt-6">
-              <Button onClick={() => setVisibleCount((prev) => prev + 10)}>Load More</Button>
+              <Button className="dark:bg-gradient-to-r dark:from-[#1f1f1f] dark:via-[#2b2b2b] dark:to-[#3b3b3b] dark:text-white dark:font-semibold dark:rounded-xl dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)] dark:hover:scale-[1.03] transition-all duration-300" onClick={() => setVisibleCount((prev) => prev + 10)}>Load More</Button>
             </div>
           )}
           {!loading && filteredContests.length === 0 && (

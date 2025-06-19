@@ -150,9 +150,9 @@ const Tasks = () => {
     });
 
   const taskCard = (task) => (
-    <Card key={task.id} className="relative rounded-2xl shadow-md border border-gray-200 bg-white flex flex-col justify-between">
+    <Card key={task.id} className="relative rounded-2xl shadow-md border border-gray-70 flex flex-col justify-between dark:bg-black/30 dark:backdrop-blur-md dark:border dark:border-zinc-700">
       <CardHeader className="space-y-1 pb-2">
-        <CardTitle className="text-md font-semibold text-gray-900 flex items-center justify-between">
+        <CardTitle className="text-md font-semibold text-gray-900 flex items-center justify-between dark:text-white">
           {task.title.length > 30 ? `${task.title.slice(0, 27)}...` : task.title}
           <div className="flex gap-1">
             <Button variant="ghost" size="icon" onClick={() => editTask(task.id)}><Pencil className="h-4 w-4 text-blue-500" /></Button>
@@ -161,34 +161,37 @@ const Tasks = () => {
         </CardTitle>
         {task.url && <a href={task.url} target="_blank" rel="noopener noreferrer" className="flex items-center text-xs text-blue-600 hover:underline"><Link className="w-3.5 h-3.5 mr-1" /> {task.url.length > 35 ? task.url.slice(0, 35) + "..." : task.url}</a>}
       </CardHeader>
-      <CardContent className="space-y-2 text-sm text-gray-700">
+      <CardContent className="space-y-2 text-sm text-gray-700 dark:text-white ">
         <div className="flex items-center text-sm"><CalendarClock className="w-4 h-4 mr-2 text-gray-600" /><span>{task.date} {task.time && `at ${task.time}`}</span></div>
         {task.description && <div className="flex items-start text-sm"><StickyNote className="w-4 h-4 mr-2 mt-0.5 text-gray-600" /> {task.description}</div>}
-        <div className="flex items-center flex-wrap gap-1"><Tags className="w-4 h-4 text-gray-600 mr-1" />{task.tags?.map((tag, index) => (<span key={index} className="bg-gray-100 border border-gray-300 text-gray-700 text-xs px-2 py-0.5 rounded-full">{tag}</span>))}</div>
+        <div className="flex items-center flex-wrap gap-1"><Tags className="w-4 h-4 text-gray-600 mr-1" />{task.tags?.map((tag, index) => (<span key={index} className="px-3 py-1 rounded-full text-xs font-medium bg-none border border-gray-70
+             dark:bg-zinc-800/70 dark:text-zinc-300 
+             dark:border-zinc-700 dark:shadow-[0_0_4px_rgba(255,255,255,0.05)] 
+             hover:bg-zinc-700 transition">{tag}</span>))}</div>
         <div className="pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <span className={`text-xs font-semibold px-2 py-1 rounded-full ${task.completed ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{task.completed ? "COMPLETED" : "IN_PROGRESS"}</span>
-          {!task.completed && <Button size="sm" className="sm:ml-auto" onClick={() => markAsComplete(task.id)}>Mark Complete</Button>}
+          <span className={`text-xs font-semibold px-2 py-1 rounded-full ${task.completed ? 'bg-green-400 text-black' : 'bg-yellow-300 text-black'}`}>{task.completed ? "COMPLETED" : "IN_PROGRESS"}</span>
+          {!task.completed && <Button size="sm" className="sm:ml-auto bg-black text-white rounded-full hover:bg-gray-900 dark:bg-gradient-to-r dark:from-[#1f1f1f] dark:via-[#2b2b2b] dark:to-[#3b3b3b] dark:text-white dark:font-semibold dark:rounded-xl dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)] dark:hover:scale-[1.03] transition-all duration-300" onClick={() => markAsComplete(task.id)}>Mark Complete</Button>}
         </div>
       </CardContent>
     </Card>
   );
 
   return (
-    <div>
+    <div className="dark:bg-[linear-gradient(145deg,_#0e0e0e,_#1a1a1a,_#202020,_#2a2a2a)] dark:shadow-[0_0_10px_rgba(255,255,255,0.05)]">
       <Nav />
-      <div className="relative">
+      <div className="flex flex-col min-h-screen">
         {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-xl w-full max-w-md relative">
-              <Button variant="ghost" size="icon" className="absolute top-2 right-2" onClick={() => { setShowModal(false); setEditId(null); }}><X className="w-5 h-5" /></Button>
-              <h2 className="text-xl font-bold mb-4">{editId ? "Edit Task" : "Add New Task"}</h2>
-              <Input placeholder="Title" className="mb-2" value={newTask.title} onChange={(e) => setNewTask({ ...newTask, title: e.target.value })} />
-              <Input placeholder="URL" className="mb-2" value={newTask.url} onChange={(e) => setNewTask({ ...newTask, url: e.target.value })} />
-              <Input type="date" className="mb-2" value={newTask.date} onChange={(e) => setNewTask({ ...newTask, date: e.target.value })} />
-              <Input placeholder="Time" className="mb-2" value={newTask.time} onChange={(e) => setNewTask({ ...newTask, time: e.target.value })} />
-              <Input placeholder="Description" className="mb-2" value={newTask.description} onChange={(e) => setNewTask({ ...newTask, description: e.target.value })} />
-              <Input placeholder="Tags (comma separated)" className="mb-4" value={newTask.tags} onChange={(e) => setNewTask({ ...newTask, tags: e.target.value })} />
-              <Button onClick={handleModalSubmit} className="w-full">{editId ? "Update Task" : "Save Task"}</Button>
+          <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 ">
+            <div className="p-6 rounded-xl w-full max-w-md relative border border-gray-70 bg-white dark:bg-[#131313] dark:shadow-xl dark:ring-1 dark:ring-zinc-800">
+              <Button variant="ghost" size="icon" className="absolute top-2 right-2 hover:bg-mute" onClick={() => { setShowModal(false); setEditId(null); }}><X className="w-5 h-5 text-black dark:text-white" /></Button>
+              <h2 className="text-xl font-bold mb-4 text-black dark:text-white rounded-full">{editId ? "Edit Task" : "Add New Task"}</h2>
+              <Input placeholder="Title" className="mb-2 dark:bg-[#222] dark:text-white dark:placeholder:text-zinc-50 bg-white" value={newTask.title} onChange={(e) => setNewTask({ ...newTask, title: e.target.value })} />
+              <Input placeholder="URL" className="mb-2 dark:bg-[#222] dark:text-white dark:placeholder:text-zinc-50 bg-white" value={newTask.url} onChange={(e) => setNewTask({ ...newTask, url: e.target.value })} />
+              <Input type="date" className="mb-2 dark:bg-[#222] dark:text-white dark:placeholder:text-zinc-50 bg-white" value={newTask.date} onChange={(e) => setNewTask({ ...newTask, date: e.target.value })} />
+              <Input placeholder="Time" className="mb-2 dark:bg-[#222] dark:text-white dark:placeholder:text-zinc-50 bg-white" value={newTask.time} onChange={(e) => setNewTask({ ...newTask, time: e.target.value })} />
+              <Input placeholder="Description" className="mb-2 dark:bg-[#222] dark:text-white dark:placeholder:text-zinc-50 bg-white" value={newTask.description} onChange={(e) => setNewTask({ ...newTask, description: e.target.value })} />
+              <Input placeholder="Tags (comma separated)" className="mb-4 dark:bg-[#222] dark:text-white dark:placeholder:text-zinc-50 bg-white" value={newTask.tags} onChange={(e) => setNewTask({ ...newTask, tags: e.target.value })} />
+              <Button onClick={handleModalSubmit} className="w-full rounded-full bg-black text-white dark:bg-gradient-to-r dark:from-[#1f1f1f] dark:via-[#2b2b2b] dark:to-[#3b3b3b] dark:text-white dark:font-semibold dark:rounded-xl dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)] dark:hover:scale-[1.03] transition-all duration-300">{editId ? "Update Task" : "Save Task"}</Button>
             </div>
           </div>
         )}
@@ -206,7 +209,7 @@ const Tasks = () => {
                   <SelectItem value="completed">Completed</SelectItem>
                 </SelectContent>
               </Select>
-              <Button onClick={() => { setShowModal(true); setEditId(null); }} className="w-full sm:w-auto"><Plus className="w-4 h-4 mr-2" /> Add Task</Button>
+              <Button onClick={() => { setShowModal(true); setEditId(null); }} className="w-full sm:w-auto dark:bg-gradient-to-r dark:from-[#1f1f1f] dark:via-[#2b2b2b] dark:to-[#3b3b3b] dark:text-white dark:font-semibold dark:rounded-xl dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)] dark:hover:scale-[1.03] transition-all duration-300"><Plus className="w-4 h-4 mr-2" /> Add Task</Button>
             </div>
           </div>
           <SectionToggle title="In Progress" count={filteredTasks.filter(t => !t.completed).length} isOpen={showInProgress} toggle={() => setShowInProgress(!showInProgress)}>
@@ -217,7 +220,7 @@ const Tasks = () => {
           </SectionToggle>
         </div>
       </div>
-      <Footer/>
+       <Footer className="mt-auto" />
     </div>
   );
 };
