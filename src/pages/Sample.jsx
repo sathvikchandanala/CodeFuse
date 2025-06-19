@@ -917,27 +917,32 @@ export default function Dashboard() {
   const location = useLocation();
 
   useEffect(() => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (user) {
-      setDisplayName(user.displayName || user.email?.split("@")[0] || "User");
-    }
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (user) {
+    setDisplayName(user.displayName || user.email?.split("@")[0] || "User");
+  }
 
-    // 🔥 Show alert only if redirected after login
-    if (location.state?.showWelcome) {
-      const delayToShow = setTimeout(() => {
-        setShowAlert(true);
+  const justLoggedIn = sessionStorage.getItem("justLoggedIn");
 
-        const delayToHide = setTimeout(() => {
-          setShowAlert(false);
-        }, 3000); // show for 3s
+  if (justLoggedIn) {
+    const delayToShow = setTimeout(() => {
+      setShowAlert(true);
 
-        return () => clearTimeout(delayToHide);
-      }, 500); // delay showing by 0.5s
+      const delayToHide = setTimeout(() => {
+        setShowAlert(false);
+      }, 3000);
 
-      return () => clearTimeout(delayToShow);
-    }
-  }, [location.state]);
+      return () => clearTimeout(delayToHide);
+    }, 500);
+
+    // ✅ Remove it immediately so it only shows once
+    sessionStorage.removeItem("justLoggedIn");
+
+    return () => clearTimeout(delayToShow);
+  }
+}, []);
+
 
   return (
     <div className="dark:bg-[linear-gradient(145deg,_#0e0e0e,_#1a1a1a,_#202020,_#2a2a2a)] dark:shadow-[0_0_10px_rgba(255,255,255,0.05)]">
