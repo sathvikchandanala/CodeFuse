@@ -12,6 +12,13 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import Nav from "./Nav";
 import Alert from "./Alert";
 import Footer from "./Footer";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger
+} from "@/components/ui/hover-card";
+import { Badge } from "@/components/ui/badge";
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 const TrackFriends = () => {
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState({ leetcode: '', codeforces: '', codechef: '' });
@@ -23,6 +30,7 @@ const TrackFriends = () => {
   const [alert, setAlert] = useState({ message: "", type: "success" });
   const [loading, setLoading] = useState(false);
   const [friendsLoading, setFriendsLoading] = useState(true);
+  
 
   useEffect(() => {
     const auth = getAuth();
@@ -183,37 +191,66 @@ const TrackFriends = () => {
                         <CardContent>
                           <ul className="space-y-2">
                             {sortedUsernames.map((name, index) => (
-                              <li
-                                key={name}
-                                className="flex flex-col md:grid md:grid-cols-3 gap-y-1 items-start md:items-center p-2 rounded-md hover:bg-muted/50"
-                              >
-                                <span className="font-medium w-full text-left md:text-left">
-                                  #{index + 1} {name}
-                                </span>
-                                <span className="font-semibold text-sm w-full text-left md:text-center">
-                                  {getPlatformScore(key, name)}
-                                </span>
-                                {name !== username[key] ? (
-                                  <div className="flex justify-start md:justify-end w-full">
-                                    <Button
-                                      size="sm"
-                                      className="px-2 text-xs bg-red-600 text-white"
-                                      onClick={async () => {
-                                        const currentList = friendsData[key];
-                                        const updated = currentList.filter(friend => friend !== name);
-                                        await setDoc(doc(db, "users", user, "friends", key), {
-                                          usernames: updated
-                                        });
-                                        setFriendsData(prev => ({ ...prev, [key]: updated }));
-                                      }}
-                                    >
-                                      Delete
-                                    </Button>
-                                  </div>
-                                ) : (
-                                  <span className="text-sm text-muted-foreground text-left md:text-right w-full">You</span>
-                                )}
-                              </li>
+                             <li
+  key={name}
+  className="flex flex-col md:grid md:grid-cols-3 gap-y-1 items-start md:items-center p-2 rounded-md hover:bg-muted/50"
+>
+  {/* Username */}
+  <span className="font-medium w-full text-left">
+    #{index + 1} {name}
+  </span>
+
+  {/* Mobile view: Score with label */}
+  <div className="text-sm font-semibold text-left w-full block md:hidden">
+    {heading}: {getPlatformScore(key, name)}
+  </div>
+
+  {/* Desktop view: Score in center column */}
+  <span className="font-semibold text-sm w-full text-center hidden md:block">
+    {getPlatformScore(key, name)}
+  </span>
+
+  {/* Actions: View Profile + Delete */}
+  {name !== username[key] ? (
+    <div className="flex flex-col sm:flex-row gap-2 justify-start md:justify-end w-full">
+      <Button
+        size="sm"
+        variant="outline"
+        className="px-2 text-xs"
+        onClick={() => {
+          const urls = {
+            leetcode: `https://leetcode.com/${name}`,
+            codeforces: `https://codeforces.com/profile/${name}`,
+            codechef: `https://www.codechef.com/users/${name}`,
+          };
+          window.open(urls[key], "_blank");
+        }}
+      >
+        View Profile
+      </Button>
+      <Button
+        size="sm"
+        className="px-2 text-xs bg-red-600 text-white"
+        onClick={async () => {
+          const currentList = friendsData[key];
+          const updated = currentList.filter(friend => friend !== name);
+          await setDoc(doc(db, "users", user, "friends", key), {
+            usernames: updated
+          });
+          setFriendsData(prev => ({ ...prev, [key]: updated }));
+        }}
+      >
+        Delete
+      </Button>
+    </div>
+  ) : (
+    <span className="text-sm text-muted-foreground text-left md:text-right w-full">
+      You
+    </span>
+  )}
+</li>
+
+
                             ))}
                           </ul>
                         </CardContent>

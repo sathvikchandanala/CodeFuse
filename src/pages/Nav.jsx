@@ -79,27 +79,39 @@ export default function Nav() {
       </header>
 
       {menuOpen && (
-        <div className="sm:hidden fixed top-16 left-0 w-full bg-white dark:bg-[#121212] border-t border-gray-200 dark:border-gray-700 shadow-md z-40 flex flex-col gap-2 p-4">
-          <NavButton icon={<FaHome />} label="Home" path="/home" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
-          <NavButton icon={<FaLink />} label="Link Accounts" path="/link" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
-          <NavButton icon={<FaTasks />} label="Task Schedules" path="/tasks" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
-          <NavButton icon={<FaTrophy />} label="Contests" path="/contests" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
-          <NavButton icon={<FaCode />} label="Hackathons" path="/hackathons" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
-          <NavButton icon={<FaUserFriends />} label="Track" path="/track" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
-          <NavButton icon={<FaUser />} label="Profile" path="/profile" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
-          <Button onClick={() => { logout(); setMenuOpen(false); }} variant="ghost" className="text-sm mt-2">
-            Log out
-          </Button>
-          <div className="flex items-center justify-between px-2 mt-2">
-            <span className="text-sm text-gray-500 dark:text-gray-400">Dark Mode</span>
-            <Switch
-              checked={theme === "dark"}
-              onCheckedChange={() => setTheme(theme === "dark" ? "light" : "dark")}
-              aria-label="Toggle Dark Mode"
-            />
-          </div>
-        </div>
-      )}
+  <div className="sm:hidden fixed top-16 left-0 w-full bg-white dark:bg-[#121212] border-t border-gray-200 dark:border-gray-700 shadow-md z-40 flex flex-col gap-2 p-4">
+    <NavButton icon={<FaHome />} label="Home" path="/home" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
+    <NavButton icon={<FaLink />} label="Link Accounts" path="/link" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
+    <NavButton icon={<FaTasks />} label="Task Schedules" path="/tasks" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
+    <NavButton icon={<FaTrophy />} label="Contests" path="/contests" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
+    <NavButton icon={<FaCode />} label="Hackathons" path="/hackathons" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
+    <NavButton icon={<FaUserFriends />} label="Track" path="/track" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
+    <NavButton icon={<FaUser />} label="Profile" path="/profile" isActive={isActive} navigate={navigate} onClick={() => setMenuOpen(false)} />
+    
+    <Button onClick={() => { logout(); setMenuOpen(false); }} variant="ghost" className="text-sm mt-2">
+      Log out
+    </Button>
+    
+<div className="flex items-center justify-between px-2 mt-2">
+  <div className="flex items-center gap-2">
+    {theme === "dark" ? (
+      <HiMoon className="text-yellow-400 w-5 h-5" />
+    ) : (
+      <HiSun className="text-yellow-500 w-5 h-5" />
+    )}
+    <span className="text-sm text-gray-500 dark:text-gray-400">
+      {theme === "dark" ? "Dark Mode" : "Light Mode"}
+    </span>
+  </div>
+  <Switch
+    checked={theme === "dark"}
+    onCheckedChange={() => setTheme(theme === "dark" ? "light" : "dark")}
+    aria-label="Toggle Dark Mode"
+  />
+</div>
+
+  </div>
+)}
 
       <div className="h-16 sm:h-20" />
     </>
